@@ -12,13 +12,13 @@
     </p>
   </a>
   <ul class="nav nav-treeview small">
-       <li class="nav-item ml-3">
+       <!-- <li class="nav-item ml-3">
           <a href="<?= $this->Url->build(['plugin'=>false, 'controller'=>'Payments', 'action'=>'index']) ?>" 
             class="nav-link <?= ($plugin == 'SmsManager' && $controller=='Messages' && $action=='send') ? 'active':'' ?>">
             <i class="nav-icon fa fa-money-bill"></i>
             <p><?= __('Paiements') ?></p>
           </a>
-      </li>
+      </li> -->
       <li class="nav-item ml-3">
           <a href="<?= $this->Url->build(['plugin'=>false, 'controller'=>'Discounts', 'action'=>'index']) ?>" 
             class="nav-link <?= ($plugin == 'SmsManager' && $controller=='Messages' && $action=='send') ? 'active':'' ?>">
@@ -27,10 +27,10 @@
           </a>
       </li>
        <li class="nav-item ml-3">
-          <a href="<?= $this->Url->build(['plugin'=>false, 'controller'=>'Bills', 'action'=>'index']) ?>" 
+          <a href="<?= $this->Url->build(['plugin'=>false, 'controller'=>'Cashboxes', 'action'=>'index']) ?>" 
             class="nav-link <?= ($plugin == 'SmsManager' && $controller=='Messages' && $action=='send') ? 'active':'' ?>">
             <i class="nav-icon fa fa-file-invoice"></i>
-            <p><?= __('Factures') ?></p>
+            <p><?= __('Mes caisses') ?></p>
           </a>
       </li>
   </ul>

@@ -6,6 +6,8 @@ namespace App\Controller;
 use Cake\Utility\Text;
 use DateTime;
 
+use function PHPUnit\Framework\isNull;
+
 /**
  * Vehicles Controller
  *
@@ -47,6 +49,8 @@ class VehiclesController extends AppController
     public function add()
     {
         $vehicle = $this->Vehicles->newEmptyEntity();
+    //     debug($vehicle);
+    //    exit();
         if ($this->request->is('post')) {
             $vehicle = $this->Vehicles->patchEntity($vehicle, $this->request->getData());
             $customer_id = $this->request->getData('customer_id');
@@ -62,6 +66,7 @@ class VehiclesController extends AppController
                 $customer->phone = $customer_phone;
                 $customer->create_uid = $this->currentUser->id;
                 $customer->write_uid = $this->currentUser->id;
+                $customer->startup_id = 1;
                 $customer->uuid = Text::uuid();
                 if ($Customers->save($customer)) {
                    $customerId = $customer->id;
@@ -73,8 +78,7 @@ class VehiclesController extends AppController
             $vehicle->uuid = Text::uuid();
             // debug($vehicle);die();
             if ($this->Vehicles->save($vehicle)) {
-                //   debug($vehicle->customer_id);
-                // exit();
+               
                 $vehicle_id = $vehicle->id;
                 $gender_id = $vehicle->gender_id;
                 $Inspections = $this->fetchTable('Inspections');
@@ -103,6 +107,7 @@ class VehiclesController extends AppController
                     $content = $template['content'];
                     $replacements = [
                        '[name]' => $customer['name'] ?? '',
+                       '[date]' =>  $inspection->end_date->format('d/m/Y') ?? '',
                      ];
                     $finalContent = str_replace(array_keys($replacements), array_values($replacements), $content);
                     $message = $Messages->newEmptyEntity();
@@ -115,20 +120,28 @@ class VehiclesController extends AppController
                     $message->create_uid = $this->currentUser->id;
                     $message->write_uid = $this->currentUser->id;
                     $message->uuid = Text::uuid();
-                    // debug($message);exit();
                     if ($Messages->save($message)) {
                            return $this->redirect(['action' => 'index']);
                         }
                     }
                 $result = ['code'=>'200','msg'=>'Véhicule enregisté']; 
                 return $this->Json($result);
-                // debug($vehicle);exit();
-                // $this->Flash->success(__('The vehicle has been saved.'));
-                // return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The vehicle could not be saved. Please, try again.'));
         }
-       $genders = $this->Vehicles->Genders->find('list', limit: 200)->all();
+        $Reminders = $this->fetchTable('Reminders');
+
+      
+        $gendersQuery = $this->Vehicles->Genders->find('all')->all();
+
+        $genders = [];
+        foreach ($gendersQuery as $gender) {
+            // Vérifie s’il existe un rappel pour ce gender
+            $isOk =  $Reminders->exists(['gender_id' => $gender->id]);
+            if ($isOk) {
+                $genders[$gender->id] = $gender->name;
+            }
+        }
        $customers = $this->Vehicles->Customers->find()
             ->select(['id', 'name', 'phone'])
             ->limit(200)
@@ -179,7 +192,6 @@ class VehiclesController extends AppController
         } else {
             $this->Flash->error(__('The vehicle could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

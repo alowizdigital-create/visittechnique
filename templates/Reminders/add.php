@@ -27,12 +27,12 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
-                     <?= $this->Form->control('name',['label'=>'Nom','class'=>'form-control select2','placeholder'=>'Ex: Nom prénom ...']); ?>
+                     <?= $this->Form->control('name',['label'=>'Nom','class'=>'form-control select2','placeholder'=>'Ex: Nom prénom ...','required'=>true]); ?>
                 </div>
               </div>
                <div class="col-md-6">
                 <div class="form-group">
-                     <?= $this->Form->control('gender_id',['options'=> $genders,'label'=>'Genre de vehicule','class'=>'form-control select2','placeholder'=>'Ex: Nom prénom ...']); ?>
+                     <?= $this->Form->control('gender_id',['options'=> $genders,'label'=>'Genre de vehicule','class'=>'form-control select2', 'required'=>true, 'placeholder'=>'Ex: Nom prénom ...']); ?>
                 </div>
               </div>
             </div>
@@ -71,7 +71,9 @@
       <div class="form-group">
         <?= $this->Form->control('name', [
           'label' => 'Nom du modèle',
+            'required' => true,
           'class' => 'form-control'
+
         ]) ?>
       </div>
       <div class="row">
@@ -81,6 +83,7 @@
                     'label' => 'Contenu du message',
                     'class' => 'form-control',
                     'type' => 'textarea',
+                    'required' => true,
                     'id' => 'messageTemplate'
                     ]) ?>
             </div>

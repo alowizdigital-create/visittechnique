@@ -254,9 +254,7 @@ class UsersController extends AppController
                     }
                 $result = ['code'=>'200','msg'=>'Véhicule enregisté']; 
                 return $this->Json($result);
-                // debug($vehicle);exit();
-                // $this->Flash->success(__('The vehicle has been saved.'));
-                // return $this->redirect(['action' => 'index']);
+               
             }
            
         }
@@ -267,6 +265,8 @@ class UsersController extends AppController
         //    $register = $this->request->getData('matricule');
            $register = str_replace(' ', '', $this->request->getData('matricule'));
            $vehicle = $this->fetchTable('Vehicles')->find()->where(['registration_number'=>$register])->first();
+        //    debug($vehicle);
+        //    exit();
            if (empty($vehicle)) {
                 $result = ['code'=>'50','msg'=>'Ce véhicule n\'existe pas ou a été supprimé'];
                 return $this->Json($result);
@@ -301,7 +301,6 @@ class UsersController extends AppController
         if ($this->request->is('ajax','post')) {
            $register = $this->request->getData('register');
            $amount = $this->request->getData('amount');
-           
            $discount = $this->request->getData('discount');
            $gender_id = $this->request->getData('gender_id');
   
@@ -324,9 +323,11 @@ class UsersController extends AppController
                 if ($Inspections->save($inspection)) {
                     $customer = $this->fetchTable('Customers')->find()
                                  ->where(['id'=> $inspection->customer_id ])->first();
+                                //   debug($customer);die();
                     $Messages = $this->fetchTable('Messages');
                     $Templates = $this->fetchTable('Templates');
                     $Reminders = $this->fetchTable('Reminders');
+                    // $Inspections = $this->fetchTable('Reminders');
                     $reminder = $Reminders->find()->where(['gender_id'=> $gender_id])->first();
                    
                     if (empty($reminder)) {
@@ -337,10 +338,13 @@ class UsersController extends AppController
                     $template_id = $reminder['template_id'];
                     $template = $Templates->find()->where(['id'=> $template_id])->first();
                     $content = $template['content'];
+
                     $replacements = [
                        '[name]' => $customer['name'] ?? '',
+                       '[date]' =>  $inspection->end_date->format('d/m/Y') ?? '',
                      ];
                     $finalContent = str_replace(array_keys($replacements), array_values($replacements), $content);
+                    // debug($finalContent);die();
                     $message = $Messages->newEmptyEntity();
                     $message->content = $finalContent;
                     $message->status = 'pending';

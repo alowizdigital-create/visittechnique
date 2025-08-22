@@ -21,20 +21,20 @@
     </li>
   </ul>
   <ul class="nav nav-treeview small">
-    <li class="nav-item ml-3">
+    <!-- <li class="nav-item ml-3">
       <a href="<?= $this->Url->build(['plugin'=>false, 'controller'=>'Templates', 'action'=>'index']) ?>" 
         class="nav-link <?= ($plugin == 'SmsManager' && $controller=='Messages' && $action=='send') ? 'active':'' ?>">
         <i class="nav-icon fa fa-file-alt"></i>
         <p><?= __('Modeles de SMS') ?></p>
       </a>
-    </li>
+    </li> -->
   </ul>
    <ul class="nav nav-treeview small">
     <li class="nav-item ml-3">
       <a href="<?= $this->Url->build(['plugin'=>false, 'controller'=>'Reminders', 'action'=>'index']) ?>" 
         class="nav-link <?= ($plugin == 'SmsManager' && $controller=='Messages' && $action=='send') ? 'active':'' ?>">
         <i class="nav-icon fa fa-bell"></i>
-        <p><?= __('Rappels') ?></p>
+        <p><?= __('Rappels et modèles') ?></p>
       </a>
     </li>
   </ul>

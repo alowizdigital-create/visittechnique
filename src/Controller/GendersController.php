@@ -47,7 +47,8 @@ class GendersController extends AppController
         $gender = $this->Genders->newEmptyEntity();
         if ($this->request->is('post')) {
             $gender = $this->Genders->patchEntity($gender, $this->request->getData());
-            $gender->price = 89000;
+           
+            $gender->price = $this->request->getData('price');
             $gender->create_uid = $this->currentUser->id;
             $gender->write_uid = $this->currentUser->id;
             $gender->uuid = Text::uuid();

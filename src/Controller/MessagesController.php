@@ -54,7 +54,6 @@ class MessagesController extends AppController
         $query = $this->Messages->find()
             ->contain(['Inspections', 'Customers']);
         $messages = $this->paginate($query);
-
         $this->set(compact('messages'));
     }
 

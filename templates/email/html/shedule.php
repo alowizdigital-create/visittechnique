@@ -51,17 +51,15 @@
 <body>
     <div class="email-container">
         <div class="email-header">
-            Bonjour
+           Salut salut !
         </div>
         <div class="email-body">
-            <p>Merci de vous être inscrit sur notre site. Pour activer votre compte, veuillez cliquer sur le lien suivant :</p>
             <p> 
-                <a href="sosmall.local/users/validate/j" class="button">Activer mon compte</a>
+                <?= h($content) ?>
             </p>
-            <p>Si vous n'avez pas demandé cette inscription, ignorez ce message. Votre compte restera inactif.</p>
         </div>
         <div class="footer">
-            <p>&copy; {{annee}} [Nom de votre entreprise] - Tous droits réservés</p>
+            <p>&copy; {{annee}} [DosSms] - Tous droits réservés</p>
         </div>
     </div>
 </body>

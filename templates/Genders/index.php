@@ -22,7 +22,7 @@
                   <tr>
                     <th>#</th>
                     <th><?= __('Nom') ?></th>
-                    <th><?= __('Note') ?></th>
+                  
                       <th><?= __('Frais de visite') ?></th>
                     <th class="text-center"><?= __('Actions') ?></th>
                   </tr>
@@ -32,7 +32,7 @@
                 <tr>
                     <td><?= $count++ ?></td>
                     <td><?= h($gender->name) ?></td>
-                    <td></td>
+                  
                      <td><?= h($gender->price) ?></td>
                     <td class="actions">
                           <?= $this->Html->link(__('<i class="fas fa-eye" style="color:#000;"></i>'), ['action' => 'view', $gender->id], ['escape' => false, 'title'=>'Consulter']) ?>
