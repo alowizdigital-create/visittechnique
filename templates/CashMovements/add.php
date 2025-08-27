@@ -1,24 +1,99 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\CashMovement $cashMovement
- * @var \Cake\Collection\CollectionInterface|string[] $cashBoxes
- * @var \Cake\Collection\CollectionInterface|string[] $users
- */
-?>
-
+<!-- Content Wrapper -->
+  
 <div class="wrapper" style="margin-top: 84px;">
+
 <div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
-   <section class="content-head">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 style="margin-left: 20px; margin-top: 20px;">  <i class="nav-icon fas fa-plus"></i>Ma caisse</h1>
+    <section class="content">
+      <div class="container-fluid" >
+            <p class="text-center font-weight-bold" style="font-size: 16px; color: #007bff;">
+            <i class="fas fa-search"></i> Trouvez rapidement un dossier en saisissant un mot-clé, 
+            en choisissant une période (date), ou en filtrant par sexe :<br>
+            <span class="text-secondary">Nom, prénom, nom complet, numéro de dossier, ou année de consultation.</span>
+            </p>
+     <h5></h5>
+        <!-- Filtres de recherche -->
+        <?= $this->Form->create(null, ['type' => 'get', 'class' => 'form-inline mb-3']) ?>
+          <div class="form-group mr-2" style="padding-left: 50px;">
+            <?= $this->Form->control('search', ['label' => false, 'class' => 'form-control', 'placeholder' => 'Mot-clé']) ?>
+          </div>
+          <div class="form-group mr-2">
+            <?= $this->Form->control('from', ['label' => false, 'type' => 'date', 'class' => 'form-control']) ?>
+          </div>
+          <div class="form-group mr-2">
+            <?= $this->Form->control('to', ['label' => false, 'type' => 'date', 'class' => 'form-control']) ?>
+          </div>
+          <div class="form-group mr-2">
+            <?= $this->Form->control('sexe', [
+              'label' => false,
+              'class' => 'form-control',
+              'options' => ['M' => 'Masculin', 'F' => 'Féminin'],
+              'empty' => 'Tous les sexes'
+            ]) ?>
+          </div>
+          <div class="form-group mr-2">
+            <?= $this->Form->button('Rechercher', ['class' => 'btn btn-primary']) ?>
+          </div>
+        <?= $this->Form->end() ?>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Dossiers médicaux</h3>
+              </div>
+
+              <div class="card-body">
+                <table id="example1" class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Type</th>
+                      <th>Montant</th>
+                      <th class="actions">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($cashMovs as $cashMov): ?>
+                      <tr>
+                         <td><?= h($cashMov->type) ?></td>
+                        <td><?= h($cashMov->type) ?></td>
+                        <td><?= $this->Number->format($cashMov->montant) ?></td>
+                        <td class="actions">
+                        <?= $this->Html->link(__('View'), ['action' => 'view', $cashMov->id]) ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $cashMov->id]) ?>
+                            <?= $this->Form->postLink(
+                                __('Delete'),
+                                ['action' => 'delete', $cashMov->id],
+                                [
+                                    'method' => 'delete',
+                                    'confirm' => __('Are you sure you want to delete # {0}?', $cashMov->id),
+                                ]
+                            ) ?>
+                        </td>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th><th></th><th></th><th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                  <?= $this->Paginator->numbers() ?>
+                </ul>
+              </div>
+
+            </div>
           </div>
         </div>
-      </div><!-- /.container-fluid -->
+
+      </div>
     </section>
+
     <section class="content">
         <div class="row">
                <div class="col-md-4">
@@ -107,9 +182,9 @@
         <!-- /.row -->
       </div><!--/. container-fluid -->
     </section>
-    <!-- /.content -->
   </div>
 </div>
+
 
 
 

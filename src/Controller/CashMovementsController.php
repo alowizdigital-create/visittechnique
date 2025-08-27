@@ -99,6 +99,11 @@ class CashMovementsController extends AppController
         $amountInit = $cashBox->solde_initial;
         $amountInput = $cashBox->cashinput;
         $amountInout = $cashBox->cashinout;
+        // Paginer toutes les cashboxes 
+        $query = $cashMovementsTable->find()
+                ->contain(['CashBoxes', 'Users']);
+        $cashMovs = $this->paginate($query);
+
         if ($cashBox->statut === 'cloturee') {
             $this->Flash->error('Cette caisse est clôturée. Aucune entrée n’est possible.');
             return $this->redirect(['controller' => 'CashBoxes', 'action' => 'view', $id]);
@@ -145,7 +150,7 @@ class CashMovementsController extends AppController
                 $this->Flash->error('Erreur lors de l\'encaissement : ' . $e->getMessage());
             }
         }
-        $this->set(compact('cashMovement', 'cashBox','amountCash','amountInit','amountInout','amountInput'));
+        $this->set(compact('cashMovs','cashMovement', 'cashBox','amountCash','amountInit','amountInout','amountInput'));
     }
 
 
