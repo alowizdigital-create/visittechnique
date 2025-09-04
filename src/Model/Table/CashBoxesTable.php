@@ -50,6 +50,10 @@ class CashBoxesTable extends Table
         $this->hasMany('CashMovements', [
             'foreignKey' => 'cash_box_id',
         ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'responsable_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**
@@ -103,7 +107,12 @@ class CashBoxesTable extends Table
             ->maxLength('uuid', 50)
             ->requirePresence('uuid', 'create')
             ->notEmptyString('uuid');
-
         return $validator;
+    }
+
+     public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->existsIn(['responsable_id'], 'Users'), ['errorField' => 'responsable_id']);
+        return $rules;
     }
 }

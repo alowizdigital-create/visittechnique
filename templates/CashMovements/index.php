@@ -1,67 +1,99 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\CashMovement> $cashMovements
- */
-?>
-<div class="cashMovements index content">
-    <?= $this->Html->link(__('New Cash Movement'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Cash Movements') ?></h3>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('cash_box_id') ?></th>
-                    <th><?= $this->Paginator->sort('type') ?></th>
-                    <th><?= $this->Paginator->sort('montant') ?></th>
-                    <th><?= $this->Paginator->sort('user_id') ?></th>
-                    <th><?= $this->Paginator->sort('justificatif') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th><?= $this->Paginator->sort('create_uid') ?></th>
-                    <th><?= $this->Paginator->sort('uuid') ?></th>
+<div class="content-wrapper" style="margin-top:74px">
+  <section class="content-head">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h3 style="margin-left: 20px; margin-top: 20px;">
+            <i class="nav-icon fas fa-box"></i> Gestion des caisses
+          </h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <!-- Filtres de recherche -->
+      <?= $this->Form->create(null, ['type' => 'get', 'class' => 'form-inline mb-3']) ?>
+        <div class="form-group mr-2" style="padding-left: 50px;">
+          <?= $this->Form->control('search', [
+            'label' => false,
+            'class' => 'form-control',
+            'placeholder' => 'Mot-clé',
+            'value' => $search ?? ''
+          ]) ?>
+        </div>
+        <div class="form-group mr-2">
+          <?= $this->Form->control('from', [
+            'label' => false,
+            'type' => 'date',
+            'class' => 'form-control',
+            'value' => $from ?? ''
+          ]) ?>
+        </div>
+        <div class="form-group mr-2">
+          <?= $this->Form->control('to', [
+            'label' => false,
+            'type' => 'date',
+            'class' => 'form-control',
+            'value' => $to ?? ''
+          ]) ?>
+        </div>
+        <div class="form-group mr-2">
+          <?= $this->Form->button('Rechercher', ['class' => 'btn btn-primary']) ?>
+        </div>
+      <?= $this->Form->end() ?>
+
+      <!-- Tableau -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Les opérations de la caisse</h3>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th><?= $this->Paginator->sort('type', 'Type') ?></th>
+                    <th><?= $this->Paginator->sort('cash_box_id', 'Caisse') ?></th>
+                    <th><?= $this->Paginator->sort('user_id', 'Utilisateur') ?></th>
+                    <th><?= $this->Paginator->sort('montant', 'Montant') ?></th>
+                    <th><?= $this->Paginator->sort('created', 'Date') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($cashMovements as $cashMovement): ?>
-                <tr>
-                    <td><?= $this->Number->format($cashMovement->id) ?></td>
-                    <td><?= $cashMovement->hasValue('cash_box') ? $this->Html->link($cashMovement->cash_box->name, ['controller' => 'CashBoxes', 'action' => 'view', $cashMovement->cash_box->id]) : '' ?></td>
-                    <td><?= h($cashMovement->type) ?></td>
-                    <td><?= $this->Number->format($cashMovement->montant) ?></td>
-                    <td><?= $cashMovement->hasValue('user') ? $this->Html->link($cashMovement->user->firstname, ['controller' => 'Users', 'action' => 'view', $cashMovement->user->id]) : '' ?></td>
-                    <td><?= h($cashMovement->justificatif) ?></td>
-                    <td><?= h($cashMovement->created) ?></td>
-                    <td><?= h($cashMovement->modified) ?></td>
-                    <td><?= $this->Number->format($cashMovement->create_uid) ?></td>
-                    <td><?= h($cashMovement->uuid) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $cashMovement->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $cashMovement->id]) ?>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($cashMovements as $cashMovement): ?>
+                    <tr>
+                      <td><?= h($cashMovement->type) ?></td>
+                      <td><?= $cashMovement->cash_box->name ?? '' ?></td>
+                      <td><?= $cashMovement->user->firstname . ' ' . $cashMovement->user->lastname ?? '' ?></td>
+                      <td><?= $this->Number->format($cashMovement->montant) ?></td>
+                      <td><?= $cashMovement->created?->i18nFormat('dd/MM/yyyy HH:mm') ?></td>
+                      <td class="actions">
+                        <?= $this->Html->link(__('Voir'), ['action' => 'view', $cashMovement->id]) ?>
+                        <?= $this->Html->link(__('Modifier'), ['action' => 'edit', $cashMovement->id]) ?>
                         <?= $this->Form->postLink(
-                            __('Delete'),
+                            __('Supprimer'),
                             ['action' => 'delete', $cashMovement->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $cashMovement->id),
-                            ]
+                            ['confirm' => __('Êtes-vous sûr de vouloir supprimer # {0}?', $cashMovement->id)]
                         ) ?>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer clearfix">
+              <ul class="pagination pagination-sm m-0 float-right">
+                <?= $this->Paginator->numbers() ?>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
-    </div>
+  </section>
 </div>

@@ -1,26 +1,25 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\CashBox $cashBox
+ * @var \App\Model\Entity\Startup $startup
  */
 ?>
 <div class="row">
     <aside class="column">
         <div class="side-nav">
             <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Cash Boxes'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('List Startups'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column column-80">
-        <div class="cashBoxes form content">
-            <?= $this->Form->create($cashBox) ?>
+        <div class="startups form content">
+            <?= $this->Form->create($startup) ?>
             <fieldset>
-                <legend><?= __('Add Cash Box') ?></legend>
+                <legend><?= __('Add Startup') ?></legend>
                 <?php
                     echo $this->Form->control('name');
-                    echo $this->Form->control('solde_initial');
-                    echo $this->Form->control('responsable_id',['options'=> $responsables]);
-                 
+                    echo $this->Form->control('create_uid');
+                    echo $this->Form->control('uuid');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

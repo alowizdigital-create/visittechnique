@@ -1,8 +1,8 @@
 <!-- Content Wrapper -->
   
 <div class="wrapper" style="margin-top: 84px;">
-
 <div class="content-wrapper">
+  
     <section class="content">
       <div class="container-fluid" >
      <h5></h5>
@@ -79,11 +79,9 @@
                   <?= $this->Paginator->numbers() ?>
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -131,7 +129,7 @@
           <div class="col-md-8">
             <!-- MAP & BOX PANE -->
               <div class="card-body">
-              <?= $this->Form->create($cashMovement) ?>
+              <?= $this->Form->create(null) ?>
                     <div class="row">
                       <div class="col-md-12">
                             <div class="form-group">
@@ -156,9 +154,9 @@
                     </div>
                      <div class="col-md-6">
                         <div class="form-group">
-                        <?= $this->Form->control('type', [
-                                'label' => 'Motif de transaction',
-                                'options'=> ['Entrée', 'Sortie'],
+                        <?= $this->Form->control('motif', [
+                                'label' => 'Selectionnez un motif',
+                                'options'=> $motifs,
                                 'class' => 'form-control',
                                 'placeholder' => 'Ex: 650000000'
                             ]); ?>
@@ -184,10 +182,8 @@
                                 'placeholder' => '...'
                             ]); ?>
                         </div>
-                       
                     </div>
                     </div>
-                  
                 <?= $this->Form->button(__('Sauvegarder'), ['class' => 'btn btn-primary form-control','style'=>'margin-top:25px']) ?>
                     <?= $this->Form->end() ?>
                     </div>

@@ -20,6 +20,8 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $modified
  * @property int $write_uid
  * @property string $uuid
+ * @property string $role
+ * 
  */
 class User extends Entity
 {
@@ -48,6 +50,7 @@ class User extends Entity
         'password' => true,
         'verified' => true,
         'phone' => true,
+        'role' => true,
         'created' => true,
         'create_uid' => true,
         'modified' => true,

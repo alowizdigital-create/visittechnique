@@ -16,15 +16,65 @@ class CashMovementsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
+
     public function index()
     {
-         $this->CashMovements = $this->fetchTable('CashMovements');
-        $query = $this->CashMovements->find()
-                ->contain(['CashBoxes', 'Users']);
-        $cashMovements = $this->paginate($query);
+        $CashMovements = $this->fetchTable('CashMovements');
+        $this->fetchTable('CashBoxes');
+        $this->fetchTable('Users');
 
-        $this->set(compact('cashMovements'));
+        // Utilisateur courant
+        $user = $this->currentUser->id;
+
+        // Base query
+        $query = $CashMovements->find()
+            ->contain(['CashBoxes', 'Users'])
+            ->where(['CashMovements.create_uid'=> 2])
+            ->order(['CashMovements.created' => 'DESC']);
+
+        // --- Filtres GET ---
+        $search = $this->request->getQuery('search');
+        $from   = $this->request->getQuery('from');
+        $to     = $this->request->getQuery('to');
+
+        if (!empty($search)) {
+            $query
+                ->leftJoinWith('CashBoxes')
+                ->leftJoinWith('Users')
+                ->andWhere([
+                    'OR' => [
+                        'CashMovements.type LIKE'   => "%$search%",
+                        'CashMovements.motif LIKE'  => "%$search%",
+                        'CashBoxes.name LIKE'       => "%$search%",
+                        'Users.firstname LIKE'      => "%$search%",
+                        'Users.lastname LIKE'       => "%$search%",
+                    ]
+                ]);
+        }
+
+        if (!empty($from)) {
+            $query->andWhere(['CashMovements.created >=' => $from . ' 00:00:00']);
+        }
+
+        if (!empty($to)) {
+            $query->andWhere(['CashMovements.created <=' => $to . ' 23:59:59']);
+        }
+
+        // --- Options de pagination ---
+        $paginateOptions = ['order' => ['CashMovements.created' => 'DESC']];
+
+        // Si pas de filtre, limiter aux 2 dernières opérations
+        if (empty($search) && empty($from) && empty($to)) {
+            $paginateOptions['limit'] = 2;
+        }
+
+        // Pagination
+        $cashMovements = $this->paginate($query, $paginateOptions);
+
+        // Envoi à la vue
+        $this->set(compact('cashMovements', 'search', 'from', 'to'));
     }
+
 
     /**
      * View method
@@ -94,6 +144,7 @@ class CashMovementsController extends AppController
     {
         $cashBoxesTable = $this->fetchTable('CashBoxes');
         $cashMovementsTable = $this->fetchTable('CashMovements');
+        $CustomersTable = $this->fetchTable('Customers');
         $cashBox = $cashBoxesTable->get($id);
         $amountCash = $cashBox->solde_actuel;
         $amountInit = $cashBox->solde_initial;
@@ -102,7 +153,14 @@ class CashMovementsController extends AppController
         // Paginer toutes les cashboxes 
         $query = $cashMovementsTable->find()
                 ->contain(['CashBoxes', 'Users']);
-        $cashMovs = $this->paginate($query);
+        $cashMovs = $this->paginate($query, [
+                        'limit' => 1
+                    ]);
+
+        $customers = $CustomersTable->find()
+                ->select(['id', 'name', 'phone'])
+                ->limit(200)
+                ->all();
 
         if ($cashBox->statut === 'cloturee') {
             $this->Flash->error('Cette caisse est clôturée. Aucune entrée n’est possible.');
@@ -129,18 +187,13 @@ class CashMovementsController extends AppController
               // AJOUTER SI LE TYPE EST UNE entrée
                  $cashBox->solde_actuel += $cashMovement->montant;
                  $cashBox->cashinput += $cashMovement->montant;
-              
             }
             $cashMovement->create_uid = 2; 
             $cashMovement->uuid = 'djfhjedf';
             $cashMovement->user_id = 1;
-             $cashMovement->motif = 1;
-                //    debug($cashMovement);
-                //  exit();
+            $cashMovement->motif = 1;
             try {
                 $cashBoxesTable->getConnection()->transactional(function () use ($cashBoxesTable, $cashMovementsTable, $cashBox, $cashMovement) {
-                    // debug($cashMovement);
-                    // exit();
                     $cashBoxesTable->saveOrFail($cashBox);
                     $cashMovementsTable->saveOrFail($cashMovement);
                 });
@@ -150,7 +203,7 @@ class CashMovementsController extends AppController
                 $this->Flash->error('Erreur lors de l\'encaissement : ' . $e->getMessage());
             }
         }
-        $this->set(compact('cashMovs','cashMovement', 'cashBox','amountCash','amountInit','amountInout','amountInput'));
+        $this->set(compact('customers','cashMovs','cashMovement', 'cashBox','amountCash','amountInit','amountInout','amountInput'));
     }
 
 
@@ -172,7 +225,6 @@ class CashMovementsController extends AppController
         } else {
             $this->Flash->error(__('The cash movement could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

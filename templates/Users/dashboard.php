@@ -53,7 +53,8 @@
       </div><!-- /.container-fluid -->
     </section>
     <!-- Main content -->
-<!-- Modal d'enregistrement de la tâche   --> 
+     
+<!-- Modal de relance vehicule  --> 
 <div class="modal fade" id="modalRelance" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -63,7 +64,6 @@
       <div class="modal-body">
         <?= $this->Form->create(NULL, ['id' => 'newRelance']) ?>
         <fieldset>
-
            <!-- Matricule -->
           <div class="row mt-2">
             <div class="col-12">
@@ -76,18 +76,17 @@
               ]) ?>
             </div>
           </div>
-
         </fieldset>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
           <?= $this->Form->button(__('Relancer'), ['class' => 'btn btn-primary']) ?>
         </div>
-
         <?= $this->Form->end() ?>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal de création de vehicule -->
 <div class="modal fade" id="detaisModal" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">

@@ -1,60 +1,82 @@
 
-<body class="hold-transition login-page" style=" padding-bottom:250px;">
-<div class="login-box">
-  <div class="login-logo">
-    <a href="../../index2.html"><b>kussala</a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="card" style="">
-    <div class="card-body login-card-body" style="">
-      <p class="login-box-msg">Sign up to kussala</p>
-      <form action="../../index3.html" method="post" id="addUser">
-        <div class="input-group mb-3">
-          <input type="email" class="form-control" required  placeholder="Email" id="email">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+<body class="">
+  <div class="container">
+    <!-- Outer Row -->
+    <div class="row justify-content-center" style="margin-top: 100px;">
+      <div class="col-xl-10 col-lg-12 col-md-9">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+          <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-6 d-none d-lg-block bg-login-image" style="margin-top: 30px; padding-left:35px; border-radius:50%;">
+                <?php echo $this->Html->image('mina.jpg', ['alt' => 'Description de l\'image','style'=>'width:100%;']); ?>
+              </div>
+              <div class="col-lg-6" style="">
+                <div class="p-5">
+                <?= $this->Flash->render('default', [
+                            'element' => 'flash/custom'
+                            ]) ?>
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Sign up to start your session</h1>
+                  </div>
+                  <?= $this->Form->create(null, ['id' => 'addUser']) ?>
+                  <fieldset>
+                    <div class="form-group">
+                       <?= $this->Form->control('email', ['label'=>'Email*','required' => true , 'class'=>'form-control form-control-user','placeholder'=>'Entrer votre adresse email...','id'=>'email']) ?> 
+                    </div>
+                    <div class="form-group">
+                        <?= $this->Form->control('password', ['label'=>'Mot de passe*','required' => true , 'class'=>'form-control form-control-user','placeholder'=>'Votre mot de passe','id'=>'password']) ?>
+                        <p style="font-size: 12px;">Le mot de passe doit comporter au moins 8 caractères comprenant un chiffre et une lettre minuscule.</p>
+                    </div>
+                  </fieldset>
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox small">
+                        <input type="checkbox" class="custom-control-input" id="customCheck">
+                        <label class="custom-control-label" for="customCheck">Remember Me</label>
+                      </div>
+                      <div class="custom-control custom-checkbox small">
+                        
+                      </div>
+                    </div>
+                    <?= $this->Form->submit(__('Créer'),[ 'class'=>'btn btn-primary mt-2', 'style'=>'']) ?> 
+                    <hr>
+                    <div class="text-center">
+                        <?= $this->Html->link("Forgot password ?", ['action' => 'forgotpassword'], ['style' => '']) ?>
+                    </div>
+                    <div class="text-center">
+                        <?= $this->Html->link("Already have an account ? ", ['action' => 'login'], ['style' => '']) ?>
+                    </div>
+                    <?= $this->Form->end() ?>
+                  <hr>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="input-group mb-3">
-          <input type="password" class="form-control" required placeholder="Password" id="password">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-          <p style="font-size: 12px;">Le mot de passe doit comporter au moins 8 caractères comprenant un chiffre et une lettre minuscule.</p>
-        </div>
-        <div class="row">
-          <!-- /.col -->
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary btn-block">Sign up</button>
-          </div>
-          <!-- /.col -->
-        </div>
-      </form>
-      <div class="row">
-         <P class="col-12" style="">Already have an account ? <a href="/users/login" class="text-center">Sign in </a></P>
       </div>
     </div>
   </div>
-</div>
+  <!-- SweetAlert2 -->
+
 </body>
+</html>
+
 <script>
-  $('#addUser').submit(function(e) {
+ $('#addUser').submit(function(e) {
     e.preventDefault();
+
     let email = $('#email').val();
     let password = $('#password').val();
+
     let dest_url = "<?= $this->Url->build(['action'=>'add']) ?>";
     dest_url = dest_url.replace(/&amp;/g, '&');
+
     let data = {
-    email: email,
-    password: password
+      email: email,
+      password: password
     };
-    let title = "<?= __('Merci de confirmer') ?>";
-    let message = $(this).attr('data-message');
-    let icon = 'warning';
-    confirmAction(title, message, icon, dest_url, data, 'reload');
+
+    // Appel direct sans confirmation
+    fetchAction(dest_url, data, 'reload');
   });
 </script>

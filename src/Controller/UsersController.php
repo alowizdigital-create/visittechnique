@@ -399,20 +399,23 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
 
-       public function add()
+     public function add()
     {
-        $this->viewBuilder()->setLayout('authentification');
+        $this->viewBuilder()->setLayout('add');
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post','ajax')) {
             $data = $this->request->getData();
             // Vérification du mot de passe
             $email = $data['email'];
             $userexist = $this->Users->find()->where(['email'=>$email])->first();
-        
             if(!empty($userexist)){
                   return $this->Json(['status'=>0, 'error'=>3,
                                   'message'=>'Un compte existe déjà avec cet adresse email.']);
             }
+            if (!preg_match('/^(?=.*[A-Z])(?=.*\d).{8,}$/', $data['password'])) {
+                return $this->Json(['status'=>0, 'error'=>3,
+                                  'message'=>'Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule et un chiffre.']);
+            } 
             if (strlen($data['password']) < 6) {
                  return $this->Json(['status'=>0, 'error'=>3,
                                   'message'=>'Le mot de passe doit contenir au moins 6 caractères.']);
@@ -426,9 +429,10 @@ class UsersController extends AppController
             $user = $this->Users->patchEntity($user, $data);
             $token = text::uuid();
             $user->uuid =  $token;
+            $user->startup_id = 1;
             $user->token_expires = (new \DateTime())->modify('+3 hours');
             $email = $user->email;
-            // $this->sendmail($token, $email);
+            
             if ($this->Users->save($user)) {
                 $email = $user->email;
                     return $this->Json(['status'=>1, 'error'=>0,
@@ -443,6 +447,7 @@ class UsersController extends AppController
         }
         $this->set(compact('user'));
     }
+
     
     public function sendmail($token, $email)
     {

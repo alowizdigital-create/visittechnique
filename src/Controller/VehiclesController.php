@@ -142,7 +142,7 @@ class VehiclesController extends AppController
                 $genders[$gender->id] = $gender->name;
             }
         }
-       $customers = $this->Vehicles->Customers->find()
+        $customers = $this->Vehicles->Customers->find()
             ->select(['id', 'name', 'phone'])
             ->limit(200)
             ->all();

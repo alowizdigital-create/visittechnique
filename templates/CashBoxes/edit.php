@@ -25,10 +25,6 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('solde_initial');
                     echo $this->Form->control('solde_actuel');
-                    echo $this->Form->control('statut');
-                    echo $this->Form->control('responsable_id');
-                    echo $this->Form->control('create_uid');
-                    echo $this->Form->control('uuid');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

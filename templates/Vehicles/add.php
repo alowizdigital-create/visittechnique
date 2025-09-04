@@ -158,15 +158,6 @@ $(document).ready(function() {
         }
     });
 
-    // Lorsqu’un tag est ajouté, afficher le modal
-    // $('#receiver').on('select2:select', function (e) {
-    //     var data = e.params.data;
-    //     if (data.newTag) {
-    //         $('#newCustomerName').val(data.text);
-    //         $('#newCustomerModal').modal('show');
-    //     }
-    // });
-
     // Autres champs
     $('.select3').select2({
         theme: 'bootstrap4',
