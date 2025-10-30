@@ -1,5 +1,4 @@
-<div class="wrapper" style="margin-top: 44px;">
-  <div class="content-wrapper" >
+ <body class="hold-transition sidebar-mini" style="padding-top: 35px;">
   <section class="content" >
     <div class="container-fluid">
       <div class="row" >
@@ -60,6 +59,8 @@
   </section>
 </div> 
 </div>
+
+
 <footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1030; background: #f8f9fa; padding: 10px 20px; border-top: 1px solid #dee2e6;">
   <div class="float-right d-none d-sm-inline">
     <b>Version</b> 3.2.0

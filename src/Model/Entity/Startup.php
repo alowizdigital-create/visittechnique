@@ -14,10 +14,16 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  * @property string $uuid
+ * @property string $phone
+ * @property string $mail
+ * @property string $logo
  *
+ * @property \App\Model\Entity\Account[] $accounts
+ * @property \App\Model\Entity\Admin[] $admins
  * @property \App\Model\Entity\Customer[] $customers
  * @property \App\Model\Entity\Gender[] $genders
  * @property \App\Model\Entity\Motif[] $motifs
+ * @property \App\Model\Entity\User[] $users
  */
 class Startup extends Entity
 {
@@ -36,8 +42,14 @@ class Startup extends Entity
         'created' => true,
         'modified' => true,
         'uuid' => true,
+        'phone' => true,
+        'mail' => true,
+        'logo' => true,
+        'accounts' => true,
+        'admins' => true,
         'customers' => true,
         'genders' => true,
         'motifs' => true,
+        'users' => true,
     ];
 }

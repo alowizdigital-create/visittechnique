@@ -29,6 +29,7 @@ use Cake\Controller\Controller;
 class AppController extends Controller
 {
     public $currentUser = null;
+  
     /**
      * Initialization hook method.
      *
@@ -49,7 +50,43 @@ class AppController extends Controller
          * see https://book.cakephp.org/5/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
+        $companies = $this->fetchTable('Startups')->find('all')->toArray();
+
         $this->currentUser = $this->Authentication->getResult()->getData();
+        $user = $this->currentUser;
+        $logUserId = 0;
+
+        if ($user) {
+        $accountTable = $this->fetchTable('Accounts');
+        $startupTable = $this->fetchTable('Startups');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $startup_id = $adminLogin->startup_id;
+            $logUserId = $adminLogin->id ?? 0;
+            $logUser = $adminTable->findById($logUserId)->first() ?? 0;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $startup_id = $accountLogin->startup_id;
+            $logUserId = $accountLogin->id ?? 0;
+            $logUser = $accountTable->findById($logUserId)->first() ?? 0;
+        }
+        // $logUser = 1;
+        $loginStartup = $startupTable->findById($startup_id)->first();
+        $startupLogo =  $loginStartup->logo ?? '';
+        $startupLoginName = $loginStartup->name ?? '';
+        $startupLoginName = 'Indisponible';
+        } else{
+        $startupLogo = 'hhd';
+        $startupLoginName = '';
+        }
+        // $logUserId = 0;
+        // debug($logUserId);die();
+        $cashbox = $this->fetchTable('CashBoxes')->find()->where(['responsable_id'=>$logUserId])->first() ?? '';
+        $notifications =  $cashbox->notification ?? '';
+        // debug($notifications);die();
+        $userAuth = $this->request->getAttribute('authentication')->getResult()->getData();
+        $this->set(compact('userAuth','companies','startupLogo','startupLoginName','notifications'));
     }
 
 

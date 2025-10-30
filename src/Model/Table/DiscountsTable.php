@@ -47,10 +47,10 @@ class DiscountsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        // $this->belongsTo('Genders', [
-        //     'foreignKey' => 'gender_id',
-        //     'joinType' => 'INNER',
-        // ]);
+        $this->belongsTo('Genders', [
+            'foreignKey' => 'gender_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**
@@ -75,11 +75,15 @@ class DiscountsTable extends Table
             ->integer('create_uid')
             ->requirePresence('create_uid', 'create')
             ->notEmptyString('create_uid');
+        $validator
+            ->integer('create_uid')
+            ->requirePresence('create_uid', 'create')
+            ->notEmptyString('create_uid');
 
         $validator
-            ->integer('write_uid')
-            ->requirePresence('write_uid', 'create')
-            ->notEmptyString('write_uid');
+            ->integer('gender_id')
+            ->requirePresence('gender_id', 'create')
+            ->notEmptyString('gender_id');
 
         $validator
             ->uuid('uuid')
@@ -98,8 +102,7 @@ class DiscountsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        // $rules->add($rules->existsIn(['gender_id'], 'Genders'), ['errorField' => 'gender_id']);
-
+        $rules->add($rules->existsIn(['gender_id'], 'Genders'), ['errorField' => 'gender_id']);
         return $rules;
     }
 }

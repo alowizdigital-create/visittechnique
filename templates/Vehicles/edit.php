@@ -1,8 +1,5 @@
-<div class="wrapper" style="margin-top: 44px;">
-<div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
-    <!-- Content Header (Page header) -->
-    <section class="content-head">
+<!-- Content Header (Page header) -->
+    <section class="content-head" style="margin-top: 44px;">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
@@ -31,39 +28,38 @@
           <div class="card-body">
            <?= $this->Form->create($vehicle) ?>
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="form-group">
-                     <?= $this->Form->control('customer_id',['options'=> $customers,'label'=>'Propietaire','class'=>'form-control select2','placeholder'=>'Ex: Nom prénom ...']); ?>
+                     <?= $this->Form->control('customer',['value'=>$customer->name,'label'=>'Nom client','class'=>'form-control','placeholder'=>'Ex: Nom prénom ...']); ?>
                 </div>
               </div>
-              <div class="col-md-6">
+            </div>
+             <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                     <?= $this->Form->control('phone',['value'=>$customer->phone,'label'=>'Téléphone','class'=>'form-control','placeholder'=>'Ex: Nom prénom ...']); ?>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
                 <div class="form-group">
                      <label></label>
                      <?= $this->Form->control('registration_number',['label'=>'Matricule','class'=>'form-control select2','placeholder'=>'Ex: XX 1234 AB']); ?>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6">
+             <div class="row">
+              <div class="col-md-12">
                 <div class="form-group">
-                     <?= $this->Form->control('brand',['label'=>'Marque','class'=>'form-control select2','placeholder'=>'Ex: Peugeot']); ?>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                     <?= $this->Form->control('model',['label'=>'Modèle','class'=>'form-control select2','placeholder'=>'Ex: Peugeot 208']); ?>
+                     <?= $this->Form->control('gender_id',['label'=>'Genre','class'=>'form-control select2','placeholder'=>'Ex: Vehicule lourd']); ?>
                 </div>
               </div>
             </div>
-             <div class="row">
-              <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
                 <div class="form-group">
-                     <?= $this->Form->control('type',['label'=>'Genre','class'=>'form-control select2','placeholder'=>'Ex: Vehicule lourd']); ?>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                     <?= $this->Form->control('weight',['label'=>'Largeur','class'=>'form-control select2','placeholder'=>'Ex: 1890 mm']); ?>
+                     <?= $this->Form->control('date',['type'=>'date','label'=>'Genre','class'=>'form-control select2','placeholder'=>'Ex: Vehicule lourd']); ?>
                 </div>
               </div>
             </div>

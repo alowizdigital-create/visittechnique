@@ -1,6 +1,4 @@
-<div class="wrapper" style="margin-top: 44px;">
-<div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
+ <body class="hold-transition sidebar-mini" style="padding-top: 35px;">
     <!-- Content Header (Page header) -->
     <section class="content-head">
       <div class="container-fluid">
@@ -47,10 +45,16 @@
              <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
+                     <?= $this->Form->control('duration',['label'=>'Durée en mois','class'=>'form-control select2','placeholder'=>'Ex: 3','options'=>['3'=>'3','6'=>'6','9'=>'9','12'=>'12']]); ?>
+                </div>
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
                      <?= $this->Form->control('note',['label'=>'Note','class'=>'form-control select2','placeholder'=>'Ex: Commentaire']); ?>
                 </div>
               </div>
-              
             </div>
            <?= $this->Form->button(__('Sauvegarder'), ['class' => 'btn btn-primary form-control select2','style'=>'margin-top:25px']) ?>
             <?= $this->Form->end() ?>

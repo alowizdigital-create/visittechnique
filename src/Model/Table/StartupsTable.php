@@ -11,9 +11,12 @@ use Cake\Validation\Validator;
 /**
  * Startups Model
  *
+ * @property \App\Model\Table\AccountsTable&\Cake\ORM\Association\HasMany $Accounts
+ * @property \App\Model\Table\AdminsTable&\Cake\ORM\Association\HasMany $Admins
  * @property \App\Model\Table\CustomersTable&\Cake\ORM\Association\HasMany $Customers
  * @property \App\Model\Table\GendersTable&\Cake\ORM\Association\HasMany $Genders
  * @property \App\Model\Table\MotifsTable&\Cake\ORM\Association\HasMany $Motifs
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\HasMany $Users
  *
  * @method \App\Model\Entity\Startup newEmptyEntity()
  * @method \App\Model\Entity\Startup newEntity(array $data, array $options = [])
@@ -48,7 +51,18 @@ class StartupsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+            $this->belongsTo('Account', [ // Use the singular alias 'Account'
+            'foreignKey' => 'account_id',
+            'joinType' => 'INNER',
+            'className' => 'Accounts' // Specify the plural table name
+        ]);
 
+        $this->hasMany('Accounts', [
+            'foreignKey' => 'startup_id',
+        ]);
+        $this->hasMany('Admins', [
+            'foreignKey' => 'startup_id',
+        ]);
         $this->hasMany('Customers', [
             'foreignKey' => 'startup_id',
         ]);
@@ -56,6 +70,9 @@ class StartupsTable extends Table
             'foreignKey' => 'startup_id',
         ]);
         $this->hasMany('Motifs', [
+            'foreignKey' => 'startup_id',
+        ]);
+        $this->hasMany('Users', [
             'foreignKey' => 'startup_id',
         ]);
     }
@@ -84,6 +101,24 @@ class StartupsTable extends Table
             ->maxLength('uuid', 40)
             ->requirePresence('uuid', 'create')
             ->notEmptyString('uuid');
+
+        $validator
+            ->scalar('phone')
+            ->maxLength('phone', 50)
+            ->requirePresence('phone', 'create')
+            ->notEmptyString('phone');
+
+        $validator
+            ->scalar('mail')
+            ->maxLength('mail', 155)
+            ->requirePresence('mail', 'create')
+            ->notEmptyString('mail');
+
+        // $validator
+        //     ->scalar('logo')
+        //     ->maxLength('logo', 255)
+        //     ->requirePresence('logo', 'create')
+        //     ->notEmptyString('logo');
 
         return $validator;
     }

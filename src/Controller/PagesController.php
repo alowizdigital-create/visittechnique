@@ -21,7 +21,7 @@ use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\View\Exception\MissingTemplateException;
-
+use Cake\Http\Client; 
 /**
  * Static content controller
  *
@@ -69,5 +69,65 @@ class PagesController extends AppController
             }
             throw new NotFoundException();
         }
+    }
+
+
+    public function sendSmsTest()
+    {
+
+        // 🚨 CONFIGURATION DE TEST (REMPLACEZ PAR VOS VALEURS RÉELLES) 🚨
+        $apiKey    = '4IlrXpZRlqp4bLOdjnBCyS6qk68uleWE7ttHRsOyJF7ydOH97Ti6H7llfmDicjdNbuY2';
+        $endpoint  = 'https://api.avlytext.com/v1/sms';
+        $sender    = 'DosSMS';
+        $recipient = '+237653321288';
+        $text      = 'Ceci est un message de test depuis DOSSMS.';
+        // ----------------------------------------------------------------------
+        // debug($apiKey);die();
+        
+        try {
+            // 1. Initialisation du Client HTTP (simule la commande curl)
+            $http = new Client();
+
+            // 2. Préparation de l'URL avec la clé API en Query Parameter
+            $urlWithKey = $endpoint . '?api_key=' . urlencode($apiKey);
+             
+            // 3. Définition des données JSON (pour le --data)
+            $data = [
+                'sender' => $sender,
+                'recipient' => $recipient,
+                'text' => $text,
+            ];
+            
+            // 4. Options pour le Header et la redirection
+            $options = [
+                'redirect' => true,      // Simule --location
+                'type' => 'json',        // Simule --header 'Content-Type: application/json'
+            ];
+
+            // 5. Exécution de la requête POST
+            $response = $http->post(
+                $urlWithKey, 
+                $data, 
+                $options
+            );
+ 
+            // debug($response);die();
+            // 6. Gestion de la Réponse
+            if ($response->isOk()) {
+                $apiResponse = $response->getJson();
+                 debug($apiResponse);die();
+                $this->Flash->success('✅ SMS envoyé avec succès! Statut API: ' . h($apiResponse['status']));
+            } else {
+                $this->Flash->error('❌ Échec de l\'envoi. Code HTTP: ' . $response->getStatusCode());
+                $this->Flash->error('Réponse API: ' . $response->getStringBody());
+            }
+        
+        } catch (\Exception $e) {
+            // Gestion des erreurs de connexion ou autres exceptions
+            $this->Flash->error('Une erreur de connexion s\'est produite : ' . $e->getMessage());
+        }
+
+        // Rediriger vers la page d'accueil après le test
+        return $this->redirect(['controller' => 'Pages', 'action' => 'display', 'home']);
     }
 }

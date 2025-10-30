@@ -25,9 +25,12 @@ class StartupsTableTest extends TestCase
      */
     protected array $fixtures = [
         'app.Startups',
+        'app.Accounts',
+        'app.Admins',
         'app.Customers',
         'app.Genders',
         'app.Motifs',
+        'app.Users',
     ];
 
     /**

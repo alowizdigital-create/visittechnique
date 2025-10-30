@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Utility\Text;
+
 /**
  * Startups Controller
  *
  * @property \App\Model\Table\StartupsTable $Startups
  */
+
 class StartupsController extends AppController
 {
     /**
@@ -17,9 +20,10 @@ class StartupsController extends AppController
      */
     public function index()
     {
+        $user = $this->currentUser;
         $query = $this->Startups->find();
         $startups = $this->paginate($query);
-
+        // debug($startups);die();
         $this->set(compact('startups'));
     }
 
@@ -32,7 +36,7 @@ class StartupsController extends AppController
      */
     public function view($id = null)
     {
-        $startup = $this->Startups->get($id, contain: ['Customers', 'Genders', 'Motifs']);
+        $startup = $this->Startups->get($id, contain: ['Accounts', 'Admins', 'Customers', 'Genders', 'Motifs', 'Users']);
         $this->set(compact('startup'));
     }
 
@@ -44,16 +48,90 @@ class StartupsController extends AppController
     public function add()
     {
         $startup = $this->Startups->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $startup = $this->Startups->patchEntity($startup, $this->request->getData());
+        if ($this->request->is('post'))
+             {
+            // Creation d'un compte pour utilisateur
+                $accountTable = $this->fetchTable('Accounts');
+                $account = $accountTable->newEmptyEntity();
+                $autoPassword = random_int(100000, 999999);
+                $account->uuid =  Text::uuid();
+                $account->name = 'fondateur';
+                $account->phone = 5678;
+                $account->startup_id = 1;
+                $account->create_uid = 1;
+                $account->write_uid = 1;
+                $account->username = 'fondateur';
+                $account->role = 'fondateur';
+                $account->passwordshow = $autoPassword;
+                $account->password =  (string)$autoPassword;
+                $accountTable->save($account);
+                // Saving startup with logo
+                $startup = $this->Startups->patchEntity($startup, $this->request->getData());
+                    $allowedFileTypes = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg'
+                ];
+                $file = $this->request->getUploadedFiles();
+                if (isset($file['logo'])) {
+                    $uploadedFile = $file['logo'];
+                    $fileType = $uploadedFile->getClientMediaType(); 
+                    if (in_array($fileType, $allowedFileTypes)) {
+                        $filename = $uploadedFile->getClientFilename();
+                        $destination = WWW_ROOT . 'img' . DS . $filename;
+                        if (!is_dir(dirname($destination))) {
+                            mkdir(dirname($destination), 0755, true);
+                        }
+                        $uploadedFile->moveTo($destination);
+                        $startup->logo = $filename;
+                    } else {
+                        $this->Flash->success(__('Type de fichier non autorisé .'));
+                    }
+                } else {
+                    $this->Flash->success(__('Aucun fichier uploadé .'));
+                }
+                $startup->uuid = Text::uuid();
+                $startup->create_uid = $this->currentUser->id;
+                $startup->account_id = $account->id;
+                // debug($startup);die();
             if ($this->Startups->save($startup)) {
+             
                 $this->Flash->success(__('The startup has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The startup could not be saved. Please, try again.'));
         }
         $this->set(compact('startup'));
+    }
+
+
+
+    public function changeStartup() 
+    {
+       $data = $this->request->getData();
+       $uuid = $data['uuid'];
+       $startup = $this->Startups->findByUuid($uuid)->first();
+       $startupAskLogin =  $startup->id;
+       $adminsTable = $this->fetchTable('Admins');
+       $admin = $adminsTable->findById($this->currentUser->id)->first();
+       $admin->startup_id = $startupAskLogin;
+       if ($adminsTable->save($admin)) {
+        // 1. Récupérer l'objet utilisateur de la session
+        $currentUser = $this->Authentication->getIdentity();
+
+        // 2. Modifier la propriété de l'objet en mémoire
+        $currentUser->startup_id = $startupAskLogin;
+
+        // 3. Réécrire l'objet mis à jour dans la session
+        $this->Authentication->setIdentity($currentUser);
+
+        // 4. Déboguer pour confirmer que la session est mise à jour
+        // debug($this->Authentication->getIdentity());
+        // exit();
+
+           return $this->Json(['code'=>105,
+                                  'msg'=>'Mutation effectuée avec succès.']);
+       }
     }
 
     /**
@@ -63,20 +141,73 @@ class StartupsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+
+    public function edit($id)
     {
         $startup = $this->Startups->get($id, contain: []);
+        // debug($startup);die();
+        
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $startup = $this->Startups->patchEntity($startup, $this->request->getData());
+            
+            // 1. CORRECTION: Récupérer 'name'
+            $name = $this->request->getData('name');
+            
+            // 2. NOUVELLE VARIABLE: Récupérer 'phone'
+            $phone = $this->request->getData('phone');
+            
+            // 3. IMPLÉMENTATION DE LA LIMITE À 11 CARACTÈRES
+            // On tronque la chaîne pour s'assurer qu'elle ne dépasse pas 11 caractères
+            $phone_limite = substr($phone, 0, 11);
+            
+            $mail = $this->request->getData('mail');
+
+            // Mettre à jour l'objet $startup avec les nouvelles données
+            $startup->name = $name;
+            $startup->phone = $phone_limite; // Utiliser la chaîne limitée
+            $startup->mail = $mail; 
+            
+            $allowedFileTypes = [
+                'image/jpeg',
+                'image/png',
+                'image/jpg'
+            ];
+            
+            $file = $this->request->getUploadedFiles();
+        
+            if (isset($file['logo']) && $file['logo']->getSize() > 0) { // Ajout de la vérification de la taille
+                $uploadedFile = $file['logo'];
+                $fileType = $uploadedFile->getClientMediaType();
+                
+                // Ajouter ici une vérification du type de fichier
+                if (in_array($fileType, $allowedFileTypes)) {
+                    $filename = $uploadedFile->getClientFilename();
+                    // Utiliser une meilleure gestion des noms de fichiers (ex: uniqid()) est recommandé !
+                    $destination = WWW_ROOT . 'img' . DS . $filename;
+                    
+                    if (!is_dir(dirname($destination))) {
+                        mkdir(dirname($destination), 0755, true);
+                    }
+                    
+                    $uploadedFile->moveTo($destination);
+                    $startup->logo = $filename;
+                    // Le message de succès est mal placé ici, il doit être après la sauvegarde.
+                } else {
+                    $this->Flash->error(__('Type de fichier non autorisé.')); // Changé en error pour plus de clarté
+                }
+            }
+            
+            // debug($startup);die();
             if ($this->Startups->save($startup)) {
                 $this->Flash->success(__('The startup has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
+            
             $this->Flash->error(__('The startup could not be saved. Please, try again.'));
         }
         $this->set(compact('startup'));
     }
+    
 
     /**
      * Delete method
@@ -94,7 +225,6 @@ class StartupsController extends AppController
         } else {
             $this->Flash->error(__('The startup could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

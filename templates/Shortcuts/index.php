@@ -1,15 +1,10 @@
-
-<div class="wrapper">
- 
-<div class="content-wrapper">
+        <body class="hold-transition sidebar-mini" style="padding-top: 25px;">
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
             <div class="row">
-               
                   <!-- ./col -->
-                  
                   </div>
                   <table id="example1" class="table table-bordered table-striped">
                   <div class="card-header">

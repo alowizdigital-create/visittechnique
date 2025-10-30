@@ -1,6 +1,4 @@
-<div class="wrapper" style="margin-top: 44px;">
-<div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
+ <body class="hold-transition sidebar-mini" style="padding-top: 35px;">
     <!-- Content Header (Page header) -->
     <section class="content-head">
       <div class="container-fluid">
@@ -91,8 +89,8 @@
         <label>> Champs disponibles :</label><br>
         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTag('[name]')">Nom</button>
         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTag('[date]')">Date</button>
-        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTag('[niu]')">N.I.U</button>
-        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTag('[reg]')">Registre de commerce</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTag('[immatriculation]')">Immatriculation</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="insertTag('[nom entreprise]')">Nom entreprise</button>
       </div>
         </div>
       <div class="col-md-6">
@@ -136,8 +134,8 @@
     const preview = document.getElementById('previewText');
     const sampleData = {
       name: "name",
-      niu: "NIU",
-      reg: "reg",
+      immatriculation: "immatriculation",
+      startup: "startup",
       date:"date"
     };
     function updatePreview() {

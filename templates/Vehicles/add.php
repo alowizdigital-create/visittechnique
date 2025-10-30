@@ -1,10 +1,4 @@
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" />
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<div class="wrapper" style="margin-top: 44px;">
-<div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini" style="padding-top: 35px;">
     <!-- Content Header (Page header) -->
     <section class="content-head">
       <div class="container-fluid">
@@ -37,19 +31,10 @@
             <div class="row">
               <div class="col-md-12">
                  <div class="form-group">
-                        <!-- <?=  $this->Form->control('customer_id', [
-                                    'label' => 'Client',
-                                    'options' => $customers,
-                                    'id' => 'receiver',
-                                    'multiple' => true,
-                                    'class' => 'form-control select2'
-                          ]); ?> -->
-                          <?=  $this->Form->control('customer_id', [
+                          <?=  $this->Form->control('custome', [
                               'label' => 'Client',
-                              'options' => $customerOptions,
-                              'id' => 'receiver',
-                               'multiple' => true,
-                              'class' => 'form-control select2'
+                              'class' => 'form-control',
+                              'placeholder' => 'Ex: Mbarga mark'
                           ]); ?>
                   </div>
               </div>
@@ -60,25 +45,39 @@
                    <?= $this->Form->control('phone', [
                         'label' => 'Téléphone',
                         'class' => 'form-control',
+                        'type' => 'integer',
                         'id' => 'phone',
-                        'placeholder' => 'Ex: 650000000'
+                        'placeholder' => 'Ex: 653990089'
                     ]); ?>
                 </div>
               </div>
                </div>
              <div class="row">
-              <div class="col-md-6">
-                 <div class="form-group">
-                     <label></label>
-                     <?= $this->Form->control('registration_number',['label'=>'l\'immatriculation','class'=>'form-control','placeholder'=>'Ex: XX 1234 AB']); ?>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      <label></label>
+                      <?= $this->Form->control('registration_number',['label'=>'l\'immatriculation','class'=>'form-control','placeholder'=>'Ex: XX 1234 AB']); ?>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      <?= $this->Form->control('gender_id',['options'=> $genders,'label'=>'Genre','class'=>'form-control','placeholder'=>'Ex: Vehicule lourd']); ?>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                 <div class="form-group">
-                     <?= $this->Form->control('gender_id',['options'=> $genders,'label'=>'Genre','class'=>'form-control','placeholder'=>'Ex: Vehicule lourd']); ?>
-                </div>
-              </div>
-            </div>
+              <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <?= $this->Form->control('date', [
+                            'label' => 'Date de la dernière visite',
+                            'class' => 'form-control',
+                             'type'=> 'date',
+                            'id' => 'lastVisitDate',
+                            'placeholder' => 'Ex: 650000000'
+                        ]); ?>
+                    </div>
+                  </div>
+               </div>
            <?= $this->Form->button(__('Sauvegarder'), ['class' => 'btn btn-primary form-control','style'=>'margin-top:25px']) ?>
             <?= $this->Form->end() ?>
             </div>
@@ -129,117 +128,3 @@
     </form>
   </div>
 </div>
-
-<!-- ./wrapper -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-<script>
-$(document).ready(function() {
-    // Initialisation du champ client avec ajout de tags
-    $('#receiver').select2({
-        theme: 'bootstrap4',
-        placeholder: "Entrez le nom du client",
-        allowClear: true,
-        tags: true, // 🔴 Permet la saisie libre
-        language: {
-            noResults: function () {
-                return "Aucun client trouvé. Appuyez sur Entrée pour en créer un.";
-            }
-        },
-        createTag: function(params) {
-            var term = $.trim(params.term);
-            if (term === '') return null;
-            return {
-                id: term,
-                text: term,
-                newTag: true
-            };
-        }
-    });
-
-    // Autres champs
-    $('.select3').select2({
-        theme: 'bootstrap4',
-        placeholder: "Choisissez un ou plusieurs groupes",
-        allowClear: true
-    });
-});
-
-
-$(document).ready(function() {
-    $('#').submit(function(e) {
-        e.preventDefault();
-        alert('Bonjour');
-        var data = {
-            name : $('#newCustomerName').val(),
-            phone: $('#newCustomerPhone'),
-            _csrfToken: myToken
-        };
-        $.ajax({
-            url: '/rootAjaxaddVehicles',
-            type: 'POST',
-            data: data,
-            dataType: 'json',
-            success: function(result) {
-                if (result.code == 200) {
-                    $('#detailsModal').modal('hide');
-                    toastr.success(result.msg);
-                    setTimeout(function() {
-                        window.location = '/users/dashboard';
-                    }, 2000);
-                } else {
-                    toastr.error(result.msg);
-                    $('#detailsModal').modal('hide');
-                }
-            },
-            error: function(xhr, status, error) {
-                toastr.error('Erreur lors de la requête AJAX');
-            }
-  });
- });
- });
-
-$('#addCustomerForm').on('submit', function(e) {
-      e.preventDefault();
-          var data = {
-            name : $('#newCustomerName').val(),
-            phone: $('#newCustomerPhone').val(),
-            _csrfToken: myToken
-        };
-    $.ajax({
-        url: '<?= $this->Url->build(['controller' => 'Customers', 'action' => 'addAjax']) ?>',
-        method: 'POST',
-        data: data,
-        success: function(result) {
-          if (result.code == 200) {
-                    toastr.success(result.msg);
-                     var newOption = new Option(result.name, result.id, true, true);
-                     $('#receiver').val(null).trigger('change');
-                     $('#receiver').append(newOption).trigger('change');
-                      $('#newCustomerModal').modal('hide');
-                } else {
-                    toastr.error(result.msg);
-                }
-        },
-        error: function() {
-            alert("Une erreur est survenue.");
-        }
-    });
-});
-$('#receiver').on('change', function () {
-    const selectedId = $(this).val();
-    const phone = customerPhones[selectedId];
-    $('#phone').val(phone || '');
-});
-
-</script>
-<script>
-  const customerPhones = <?= json_encode(
-    collection($customers)->combine('id', 'phone')->toArray()
-  ) ?>;
-</script>
-
-
-
-

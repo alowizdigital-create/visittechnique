@@ -1,65 +1,293 @@
 
-<body class="">
-  <div class="container">
-    <!-- Outer Row -->
-    <div class="row justify-content-center" style="margin-top: 100px;">
-      <div class="col-xl-10 col-lg-12 col-md-9">
-        <div class="card o-hidden border-0 shadow-lg my-5">
-          <div class="card-body p-0">
-            <!-- Nested Row within Card Body -->
-            <div class="row">
-                <div class="col-lg-6 d-none d-lg-block bg-login-image" style="margin-top: 30px; padding-left:35px; border-radius:50%;">
-                <?php echo $this->Html->image('mina.jpg', ['alt' => 'Description de l\'image','style'=>'width:100%;']); ?>
-              </div>
-              <div class="col-lg-6" style="">
-                <div class="p-5">
-                <?= $this->Flash->render('default', [
-                            'element' => 'flash/custom'
-                            ]) ?>
-                  <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Sign up to start your session</h1>
-                  </div>
-                  <?= $this->Form->create(null, ['id' => 'addUser']) ?>
-                  <fieldset>
-                    <div class="form-group">
-                       <?= $this->Form->control('email', ['label'=>'Email*','required' => true , 'class'=>'form-control form-control-user','placeholder'=>'Entrer votre adresse email...','id'=>'email']) ?> 
-                    </div>
-                    <div class="form-group">
-                        <?= $this->Form->control('password', ['label'=>'Mot de passe*','required' => true , 'class'=>'form-control form-control-user','placeholder'=>'Votre mot de passe','id'=>'password']) ?>
-                        <p style="font-size: 12px;">Le mot de passe doit comporter au moins 8 caractères comprenant un chiffre et une lettre minuscule.</p>
-                    </div>
-                  </fieldset>
-                    <div class="form-group">
-                      <div class="custom-control custom-checkbox small">
-                        <input type="checkbox" class="custom-control-input" id="customCheck">
-                        <label class="custom-control-label" for="customCheck">Remember Me</label>
-                      </div>
-                      <div class="custom-control custom-checkbox small">
-                        
-                      </div>
-                    </div>
-                    <?= $this->Form->submit(__('Créer'),[ 'class'=>'btn btn-primary mt-2', 'style'=>'']) ?> 
-                    <hr>
-                    <div class="text-center">
-                        <?= $this->Html->link("Forgot password ?", ['action' => 'forgotpassword'], ['style' => '']) ?>
-                    </div>
-                    <div class="text-center">
-                        <?= $this->Html->link("Already have an account ? ", ['action' => 'login'], ['style' => '']) ?>
-                    </div>
-                    <?= $this->Form->end() ?>
-                  <hr>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- SweetAlert2 -->
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Mon Appli de Visite Technique</title>
+    <!-- FontAwesome for icons (e.g., show/hide password) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        /* General Styles */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #f8f9fa;
+            --accent-color: #6c757d;
+            --card-bg: #ffffff;
+            --card-hover-bg: #f1f1f1;
+            --text-color: #333;
+            --link-color: #007bff;
+            --border-color: #ced4da;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Login Container */
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        /* Header */
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Form Styles */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.2);
+        }
+
+        .password-group {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            bottom: 12px;
+            cursor: pointer;
+            color: var(--accent-color);
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary-color);
+        }
+
+        .login-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        /* State for disabled button */
+        .login-button:disabled {
+            background-color: #8c8c8c;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-button:hover {
+            background-color: #004494;
+            transform: translateY(-2px);
+        }
+
+        .forgot-password-link {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .forgot-password-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* New User Section (the card) */
+        .new-user-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .pre-register-card {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            gap: 20px;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+
+        .pre-register-card:hover {
+            background-color: var(--card-hover-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon-wrapper {
+            background-color: #e6e6fa; /* Light purple */
+            color: #6a0dad; /* Dark purple */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .card-text {
+            flex-grow: 1;
+        }
+
+        .card-text h3 {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .card-text p {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-top: 5px;
+        }
+
+        .card-arrow {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .pre-register-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .card-icon-wrapper, .card-arrow {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="login-container">
+        <div class="login-box">
+            <header class="login-header">
+                 <?= $this->Html->image('xtech.jpg', [
+                      'class' => 'app-logo', 
+                      'alt' => 'AdminLTE Logo'
+                  ]) ?> 
+                <h1 class="login-title">Créer votre compte</h1>
+            </header>
+
+            <!-- Ajout d'un ID au formulaire pour le cibler en JavaScript -->
+            <form  action="#" method="POST" class="login-form" id="loginUser">
+                <div class="form-group">
+                    <label for="email">Adresse e-mail</label>
+                    <input type="email" id="email" name="email" placeholder="entrez votre e-mail" required>
+                </div>
+
+                <div class="form-group password-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="entrez votre mot de passe" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <!-- Ajout d'un ID au bouton pour le cibler en JavaScript -->
+                <button type="submit" id="loginButton" class="login-button">Sauvegarder</button>
+                
+            </form>
+
+            <div class="new-user-section">
+                <a href="/users/login" class="pre-register-card">
+                    <div class="card-icon-wrapper">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="card-text">
+                        <h3>Vous avez de un compte ?</h3>
+                        <p>Connectez vous</p>
+                    </div>
+                    <div class="card-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
+
 
 <script>
  $('#addUser').submit(function(e) {

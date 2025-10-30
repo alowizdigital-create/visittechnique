@@ -27,48 +27,12 @@
                     <td><?= h($vehicle->registration_number) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Brand') ?></th>
-                    <td><?= h($vehicle->brand) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Model') ?></th>
-                    <td><?= h($vehicle->model) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Type') ?></th>
-                    <td><?= h($vehicle->type) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Uuid') ?></th>
-                    <td><?= h($vehicle->uuid) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($vehicle->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Year') ?></th>
-                    <td><?= $this->Number->format($vehicle->year) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Weight') ?></th>
-                    <td><?= $this->Number->format($vehicle->weight) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Create Uid') ?></th>
-                    <td><?= $this->Number->format($vehicle->create_uid) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Write Uid') ?></th>
-                    <td><?= $this->Number->format($vehicle->write_uid) ?></td>
-                </tr>
-                <tr>
                     <th><?= __('Created') ?></th>
-                    <td><?= h($vehicle->created) ?></td>
+                    <td><?= h($vehicle->created->nice()) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Modified') ?></th>
-                    <td><?= h($vehicle->modified) ?></td>
+                    <th><?= __('Date de dernière visite') ?></th>
+                    <td><?= h($vehicle->lastvisitdate->nice()) ?></td>
                 </tr>
             </table>
         </div>

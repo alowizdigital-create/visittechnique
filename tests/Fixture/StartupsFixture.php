@@ -22,9 +22,12 @@ class StartupsFixture extends TestFixture
                 'id' => 1,
                 'name' => 'Lorem ipsum dolor sit amet',
                 'create_uid' => 1,
-                'created' => 1756873733,
-                'modified' => 1756873733,
+                'created' => 1757589777,
+                'modified' => 1757589777,
                 'uuid' => 'Lorem ipsum dolor sit amet',
+                'phone' => 'Lorem ipsum dolor sit amet',
+                'mail' => 'Lorem ipsum dolor sit amet',
+                'logo' => 'Lorem ipsum dolor sit amet',
             ],
         ];
         parent::init();

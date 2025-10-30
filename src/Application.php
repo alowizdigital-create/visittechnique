@@ -43,7 +43,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @extends \Cake\Http\BaseApplication<\App\Application>
  */
 class Application extends BaseApplication
-    implements AuthenticationServiceProviderInterface
+implements AuthenticationServiceProviderInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -54,7 +54,6 @@ class Application extends BaseApplication
     {
         // Call parent to load bootstrap from files.
         parent::bootstrap();
-
         if (PHP_SAPI !== 'cli') {
             FactoryLocator::add(
                 'Table',
@@ -87,49 +86,73 @@ class Application extends BaseApplication
             // See https://github.com/CakeDC/cakephp-cached-routing
             ->add(new RoutingMiddleware($this))
 
+            ->add(new AuthenticationMiddleware($this))
+
             // Parse various types of encoded request bodies so that they are
             // available as array through $request->getData()
             // https://book.cakephp.org/5/en/controllers/middleware.html#body-parser-middleware
             ->add(new BodyParserMiddleware())
-
-            ->add(new AuthenticationMiddleware($this))
 
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/5/en/security/csrf.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
             ]));
-
         return $middlewareQueue;
     }
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
+        $prefix = $request->getParam('prefix');
         $authenticationService = new AuthenticationService([
-            'unauthenticatedRedirect' => Router::url('/users/login'),
+            'unauthenticatedRedirect' => Router::url('/customers/login'),
             'queryParam' => 'redirect',
         ]);
-
-        // Load identifiers, ensure we check email and password fields
-        $authenticationService->loadIdentifier('Authentication.Password', [
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
-            ],
-        ]);
-
-        // Load the authenticators, you want session first
-        $authenticationService->loadAuthenticator('Authentication.Session');
-        // Configure form data check to pick email and password
-        $authenticationService->loadAuthenticator('Authentication.Form', [
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
-            ],
-            'loginUrl' => Router::url('/users/login'),
-        ]);
+    
+        if ($prefix === 'Admin') {
+            $authenticationService->loadIdentifier('Authentication.Password', [
+                'fields' => ['username' => 'email', 'password' => 'password'],
+                'resolver' => [
+                    'userModel' => 'Admins',
+                    'className' => 'Authentication.Orm',
+                ],
+            ]);
+            $authenticationService->loadAuthenticator('Authentication.Session');
+            $authenticationService->loadAuthenticator('Authentication.Form', [
+                'fields' => ['username' => 'email', 'password' => 'password'],
+                'loginUrl' => Router::url('/admin/login'),
+            ]);
+            
+        } elseif ($prefix === 'Account') {
+             $authenticationService->loadIdentifier('Authentication.Password', [
+                'fields' => ['username' => 'username', 'password' => 'password'],
+                'resolver' => [
+                    'userModel' => 'Accounts',
+                    'className' => 'Authentication.Orm',
+                ],
+            ]);
+            $authenticationService->loadAuthenticator('Authentication.Session');
+            $authenticationService->loadAuthenticator('Authentication.Form', [
+                'fields' => ['username' => 'username', 'password' => 'password'],
+                'loginUrl' => Router::url('/account/login'),
+            ]);
+    
+        } else {
+            $authenticationService->loadIdentifier('Authentication.Password', [
+                'fields' => ['username' => 'login', 'password' => 'password'],
+                'resolver' => [
+                    'userModel' => 'Users',
+                    'className' => 'Authentication.Orm',
+                ],
+            ]);
+    
+            $authenticationService->loadAuthenticator('Authentication.Session');
+            $authenticationService->loadAuthenticator('Authentication.Form', [
+                'fields' => ['username' => 'login', 'password' => 'password'],
+                'loginUrl' => Router::url('/users/login'),
+            ]);
+        }
         return $authenticationService;
     }
-
     /**
      * Register application container services.
      *

@@ -19,6 +19,19 @@ class RemindersController extends AppController
      */
     public function index()
     {
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
         $query = $this->Reminders->find()
             ->contain(['Genders', 'Templates']);
         $reminders = $this->paginate($query);
@@ -45,6 +58,19 @@ class RemindersController extends AppController
      */
     public function add()
     {
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
         $Templates = $this->fetchTable('Templates');
         $template = $Templates->newEmptyEntity();
         $reminder = $this->Reminders->newEmptyEntity();
@@ -56,6 +82,7 @@ class RemindersController extends AppController
             $template->content = $content;
             $template->create_uid = $this->currentUser->id;
             $template->write_uid = $this->currentUser->id;
+            $template->startup_id = $startup_id;
             $template->uuid = Text::uuid();
             if ($Templates->save($template)) {
                   $template_id = $template->id;
@@ -64,6 +91,7 @@ class RemindersController extends AppController
             $reminder->create_uid = $this->currentUser->id;
             $reminder->write_uid = $this->currentUser->id;
             $reminder->uuid = Text::uuid();
+            $reminder->startup_id = $startup_id;
             // debug($reminder);die();
             if ($this->Reminders->save($reminder)) {
                 $this->Flash->success(__('The reminder has been saved.'));
@@ -73,7 +101,7 @@ class RemindersController extends AppController
             $this->Flash->error(__('The reminder could not be saved. Please, try again.'));
         }
         $genders = $this->Reminders->Genders->find('list', limit: 200)->all();
-        $templates = $this->Reminders->Templates->find('list', limit: 200)->all();
+        $templates = $this->Reminders->Templates->find('list', limit: 200)->where(['startup_id'=> $startup_id])->all();
         $this->set(compact('reminder', 'genders', 'templates'));
     }
 

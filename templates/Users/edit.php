@@ -1,40 +1,81 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\User $user
- */
-?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $user->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $user->id), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+ <body class="hold-transition sidebar-mini" style="padding-top: 55px;">
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Profile Image -->
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center">
+                    <?= $this->Html->image($userAuth->profile ?? '', [
+                        'class' => 'profile-user-img img-fluid img-circle',
+                        'alt' => 'AdminLTE Logo'
+                    ]) ?>
+                </div>
+                <h3 class="profile-username text-center"><?php echo htmlspecialchars($userAuth->name); ?></h3>
+                <p class="text-muted text-center"><?php echo htmlspecialchars($userAuth->role); ?></p>
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item">
+                    <b>Téléphone</b> <a class="float-right"><?php echo htmlspecialchars($userAuth->phone); ?></a>
+                  </li>
+                
+                </ul>
+                <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-md-9">
+            <div class="card">
+              <div class="card-header p-2">
+                <ul class="nav nav-pills">
+                  <li class="nav-item"><a class="nav-link active" href="#settings" data-toggle="tab">Réglage</a></li>
+                </ul>
+              </div><!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content">
+                              <div class="active tab-pane" id="settings">
+               <?= $this->Form->create($account) ?>
+                <form class="form-horizontal" id="formUser" type='file' enctype='multipart/form-data'>
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                         <?php   echo $this->Form->control('name',['class'=>'form-control']); ?>
+                    </div>
+                </div>
+                 <div class="form-group row">
+                    <div class="col-sm-12">
+                         <?php   echo $this->Form->control('phone',['class'=>'form-control']); ?>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                         <?php   echo $this->Form->control('role',['class'=>'form-control']); ?>
+                    </div>
+                </div>
+                  <div class="form-group row">
+                    <div class="col-sm-12">
+                         <?php   echo $this->Form->control('passwordshow',['class'=>'form-control']); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class=" col-sm-12">
+                    <?= $this->Form->button(__('Mettre à jour',['class'=>'btn btn-success'],['class'=>'btn btn-success']),['class'=>'btn btn-success']) ?>
+                </div>
+            </div>
+           <?= $this->Form->end() ?>
+                  </div>
+                  <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="users form content">
-            <?= $this->Form->create($user) ?>
-            <fieldset>
-                <legend><?= __('Edit User') ?></legend>
-                <?php
-                    echo $this->Form->control('firstname');
-                    echo $this->Form->control('lastname');
-                    echo $this->Form->control('email');
-                    echo $this->Form->control('password');
-                    echo $this->Form->control('verified');
-                    echo $this->Form->control('phone');
-                    echo $this->Form->control('create_uid');
-                    echo $this->Form->control('write_uid');
-                    echo $this->Form->control('uuid');
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
-    </div>
-</div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+   

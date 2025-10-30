@@ -1,57 +1,90 @@
-<div class="wrapper">
-  <!-- /.navbar -->
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper" style="margin-top:74px">
-  <section class="content">
-      <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
+        <body class="hold-transition sidebar-mini" style="padding-top: 25px;">
+ <section class="content" style="margin-top: 54px;">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-4 col-4">
-                <!-- small box -->
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3><?= h($vehiclesCount) ?></h3>  
-                            <p>Vehicules enregistrés </p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'index']) ?>" class="small-box-footer"> <?= __('Liste des vehicules') ?><i class="fas fa-arrow-circle-right"></i></a>
-                        <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'add']) ?>" class="small-box-footer" > <?= __('Nouveau véhicule') ?><i class="fas fa-arrow-circle-right"></i></a>
+            <div class="col-lg-3 col-6">
+                <div class="card p-3" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-secondary">Véhicules enregistrés</h5>
+                        <i class="fas fa-car fa-2x text-primary"></i>
                     </div>
+                    <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($allVehicle) ?> </h2>
+                    <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'index']) ?>" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
+                        Liste des véhicules <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
             </div>
-            <div class="col-lg-4 col-4">
-                <!-- small box -->
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3> 600 </h3>
-                            <p>SMS envoiyés ce mois </p>
-                        </div>
-                    <div class="icon">
-                        <i class="ion ion-bag"></i>
+            <div class="col-lg-3 col-6">
+                <div class="card p-3" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-secondary">SMS en attentes D'envoies</h5>
+                        <i class="fas fa-paper-plane fa-2x text-primary"></i>
                     </div>
-                    <a href="<?=  $this->Url->Build(['controller'=>'Messages','action'=>'index']) ?>" class="small-box-footer"> <?= __('Savoir plus') ?><i class="fas fa-arrow-circle-right"></i></a>
-                    <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'index']) ?>" class="small-box-footer"  data-bs-toggle="modal" data-bs-target="#modalRelance" > <?= __('Relancer un client') ?><i class="fas fa-arrow-circle-right"></i></a>
-                  </div>
-        </div>
-          <div class="col-lg-4 col-4">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-              <h3>56</h3>
-              <p>SMS restant </p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-bag"></i>
-              </div>
-              <a href="<?=  $this->Url->Build(['controller'=>'Messages','action'=>'index']) ?>" class="small-box-footer"> <?= __(' Voir la liste') ?><i class="fas fa-arrow-circle-right"></i></a>
+                    <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($allPendingMessages) ?></h2>
+                    <a href="<?=  $this->Url->Build(['controller'=>'Messages','action'=>'pending']) ?>" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
+                        Savoir plus <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
             </div>
-          </div>
-          <!-- ./col -->
-          <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <div class="card p-3" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-secondary">SMS envoyés ce mois</h5>
+                        <i class="fas fa-paper-plane fa-2x text-primary"></i>
+                    </div>
+                    <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($thisMonthMessages) ?></h2>
+                    <a href="<?=  $this->Url->Build(['controller'=>'Messages','action'=>'sent']) ?>" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
+                        Savoir plus <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="card p-3" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-secondary">État journalier de caisse</h5>
+                        <i class="fas fa-cash-register fa-2x text-primary"></i>
+                    </div>
+                    <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($daylyCash) ?> Fcfa</h2>
+                    <a href="/cashBoxes/index" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
+                        Voir la liste <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-      </div><!-- /.container-fluid -->
-    </section>
+        <div class="row mt-4">
+            <div class="col-12">
+                <h4 class="text-primary mb-3">Actions rapides</h4>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card p-3 text-center" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <h5 class="card-title mt-2">Nouveau véhicule</h5>
+                    <p class="card-text text-secondary mb-3">Enregistrer un nouveau véhicule dans la base de données.</p>
+                    <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'add']) ?>" class="btn btn-outline-primary" style="border-radius: 50px;">
+                        <i class="fas fa-plus me-2"></i> Ajouter un véhicule
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card p-3 text-center" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <h5 class="card-title mt-2">Relancer un client</h5>
+                    <p class="card-text text-secondary mb-3">Envoyer une relance par SMS à un client.</p>
+                    <a href="#" class="btn btn-outline-primary" style="border-radius: 50px;" data-bs-toggle="modal" data-bs-target="#modalRelance">
+                        <i class="fas fa-bell me-2"></i> Relancer maintenant
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1030; background: #f8f9fa; padding: 10px 20px; border-top: 1px solid #dee2e6;">
+  <div class="float-right d-none d-sm-inline">
+    <b>Version</b> 3.2.0
+  </div>
+  <strong>Copyright &copy; 2025 <a href="#">X-technova</a></strong> Tous droits réservés.
+
+  <a href="https://wa.me/237242232052" style="margin-left: 20px;"> Contactez-nous sur Whatsapp</a>
+</footer>
     <!-- Main content -->
      
 <!-- Modal de relance vehicule  --> 
@@ -135,7 +168,6 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
           <?= $this->Form->button(__('Enregistrer'), ['class' => 'btn btn-primary']) ?>
         </div>
-
         <?= $this->Form->end() ?>
       </div>
     </div>
@@ -193,7 +225,6 @@
     </div>
   </div>
 </div>
-
 
 <script>
 $(document).ready(function() {

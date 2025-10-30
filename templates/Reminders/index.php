@@ -1,5 +1,4 @@
-<div class="wrapper" style="margin-top: 44px;">
-  <div class="content-wrapper" >
+ <body class="hold-transition sidebar-mini" style="padding-top: 35px;">
   <section class="content" >
     <div class="container-fluid">
       <div class="row" >

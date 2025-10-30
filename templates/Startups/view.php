@@ -27,6 +27,18 @@
                     <td><?= h($startup->uuid) ?></td>
                 </tr>
                 <tr>
+                    <th><?= __('Phone') ?></th>
+                    <td><?= h($startup->phone) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Mail') ?></th>
+                    <td><?= h($startup->mail) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Logo') ?></th>
+                    <td><?= h($startup->logo) ?></td>
+                </tr>
+                <tr>
                     <th><?= __('Id') ?></th>
                     <td><?= $this->Number->format($startup->id) ?></td>
                 </tr>
@@ -43,6 +55,104 @@
                     <td><?= h($startup->modified) ?></td>
                 </tr>
             </table>
+            <div class="related">
+                <h4><?= __('Related Accounts') ?></h4>
+                <?php if (!empty($startup->accounts)) : ?>
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th><?= __('Id') ?></th>
+                            <th><?= __('Username') ?></th>
+                            <th><?= __('Password') ?></th>
+                            <th><?= __('Passwordshow') ?></th>
+                            <th><?= __('Created') ?></th>
+                            <th><?= __('Modified') ?></th>
+                            <th><?= __('Uuid') ?></th>
+                            <th><?= __('Startup Id') ?></th>
+                            <th><?= __('Name') ?></th>
+                            <th><?= __('Phone') ?></th>
+                            <th><?= __('Role') ?></th>
+                            <th><?= __('Write Uid') ?></th>
+                            <th><?= __('Create Uid') ?></th>
+                            <th class="actions"><?= __('Actions') ?></th>
+                        </tr>
+                        <?php foreach ($startup->accounts as $account) : ?>
+                        <tr>
+                            <td><?= h($account->id) ?></td>
+                            <td><?= h($account->username) ?></td>
+                            <td><?= h($account->password) ?></td>
+                            <td><?= h($account->passwordshow) ?></td>
+                            <td><?= h($account->created) ?></td>
+                            <td><?= h($account->modified) ?></td>
+                            <td><?= h($account->uuid) ?></td>
+                            <td><?= h($account->startup_id) ?></td>
+                            <td><?= h($account->name) ?></td>
+                            <td><?= h($account->phone) ?></td>
+                            <td><?= h($account->role) ?></td>
+                            <td><?= h($account->write_uid) ?></td>
+                            <td><?= h($account->create_uid) ?></td>
+                            <td class="actions">
+                                <?= $this->Html->link(__('View'), ['controller' => 'Accounts', 'action' => 'view', $account->id]) ?>
+                                <?= $this->Html->link(__('Edit'), ['controller' => 'Accounts', 'action' => 'edit', $account->id]) ?>
+                                <?= $this->Form->postLink(
+                                    __('Delete'),
+                                    ['controller' => 'Accounts', 'action' => 'delete', $account->id],
+                                    [
+                                        'method' => 'delete',
+                                        'confirm' => __('Are you sure you want to delete # {0}?', $account->id),
+                                    ]
+                                ) ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </div>
+            <div class="related">
+                <h4><?= __('Related Admins') ?></h4>
+                <?php if (!empty($startup->admins)) : ?>
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th><?= __('Id') ?></th>
+                            <th><?= __('Email') ?></th>
+                            <th><?= __('Password') ?></th>
+                            <th><?= __('Created') ?></th>
+                            <th><?= __('Uuid') ?></th>
+                            <th><?= __('Modified') ?></th>
+                            <th><?= __('Startup Id') ?></th>
+                            <th><?= __('Role') ?></th>
+                            <th class="actions"><?= __('Actions') ?></th>
+                        </tr>
+                        <?php foreach ($startup->admins as $admin) : ?>
+                        <tr>
+                            <td><?= h($admin->id) ?></td>
+                            <td><?= h($admin->email) ?></td>
+                            <td><?= h($admin->password) ?></td>
+                            <td><?= h($admin->created) ?></td>
+                            <td><?= h($admin->uuid) ?></td>
+                            <td><?= h($admin->modified) ?></td>
+                            <td><?= h($admin->startup_id) ?></td>
+                            <td><?= h($admin->role) ?></td>
+                            <td class="actions">
+                                <?= $this->Html->link(__('View'), ['controller' => 'Admins', 'action' => 'view', $admin->id]) ?>
+                                <?= $this->Html->link(__('Edit'), ['controller' => 'Admins', 'action' => 'edit', $admin->id]) ?>
+                                <?= $this->Form->postLink(
+                                    __('Delete'),
+                                    ['controller' => 'Admins', 'action' => 'delete', $admin->id],
+                                    [
+                                        'method' => 'delete',
+                                        'confirm' => __('Are you sure you want to delete # {0}?', $admin->id),
+                                    ]
+                                ) ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </div>
             <div class="related">
                 <h4><?= __('Related Customers') ?></h4>
                 <?php if (!empty($startup->customers)) : ?>
@@ -176,6 +286,68 @@
                                     [
                                         'method' => 'delete',
                                         'confirm' => __('Are you sure you want to delete # {0}?', $motif->id),
+                                    ]
+                                ) ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </div>
+            <div class="related">
+                <h4><?= __('Related Users') ?></h4>
+                <?php if (!empty($startup->users)) : ?>
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <th><?= __('Id') ?></th>
+                            <th><?= __('Firstname') ?></th>
+                            <th><?= __('Lastname') ?></th>
+                            <th><?= __('Email') ?></th>
+                            <th><?= __('Password') ?></th>
+                            <th><?= __('Myproject') ?></th>
+                            <th><?= __('Startup Id') ?></th>
+                            <th><?= __('Role') ?></th>
+                            <th><?= __('Verified') ?></th>
+                            <th><?= __('Token Expires') ?></th>
+                            <th><?= __('Phone') ?></th>
+                            <th><?= __('Created') ?></th>
+                            <th><?= __('Create Uid') ?></th>
+                            <th><?= __('Modified') ?></th>
+                            <th><?= __('Write Uid') ?></th>
+                            <th><?= __('Uuid') ?></th>
+                            <th><?= __('Username') ?></th>
+                            <th class="actions"><?= __('Actions') ?></th>
+                        </tr>
+                        <?php foreach ($startup->users as $user) : ?>
+                        <tr>
+                            <td><?= h($user->id) ?></td>
+                            <td><?= h($user->firstname) ?></td>
+                            <td><?= h($user->lastname) ?></td>
+                            <td><?= h($user->email) ?></td>
+                            <td><?= h($user->password) ?></td>
+                            <td><?= h($user->myproject) ?></td>
+                            <td><?= h($user->startup_id) ?></td>
+                            <td><?= h($user->role) ?></td>
+                            <td><?= h($user->verified) ?></td>
+                            <td><?= h($user->token_expires) ?></td>
+                            <td><?= h($user->phone) ?></td>
+                            <td><?= h($user->created) ?></td>
+                            <td><?= h($user->create_uid) ?></td>
+                            <td><?= h($user->modified) ?></td>
+                            <td><?= h($user->write_uid) ?></td>
+                            <td><?= h($user->uuid) ?></td>
+                            <td><?= h($user->username) ?></td>
+                            <td class="actions">
+                                <?= $this->Html->link(__('View'), ['controller' => 'Users', 'action' => 'view', $user->id]) ?>
+                                <?= $this->Html->link(__('Edit'), ['controller' => 'Users', 'action' => 'edit', $user->id]) ?>
+                                <?= $this->Form->postLink(
+                                    __('Delete'),
+                                    ['controller' => 'Users', 'action' => 'delete', $user->id],
+                                    [
+                                        'method' => 'delete',
+                                        'confirm' => __('Are you sure you want to delete # {0}?', $user->id),
                                     ]
                                 ) ?>
                             </td>

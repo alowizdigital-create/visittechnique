@@ -19,9 +19,21 @@ class DiscountsController extends AppController
      */
     public function index()
     {
-        $query = $this->Discounts->find();
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        $today = new \DateTime();
+        $todayDate = $today->format('Y-m-d');
+        if ($adminLogin) {
+            $startup_id = $adminLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $startup_id = $accountLogin->startup_id;
+        }
+        $query = $this->Discounts->find()->where(['Discounts.startup_id'=>$startup_id])->contain(['Genders']);
         $discounts = $this->paginate($query);
-        $this->set(compact('discounts'));
+        $this->set(compact('discounts','todayDate'));
     }
 
     /**
@@ -44,23 +56,36 @@ class DiscountsController extends AppController
      */
     public function add()
     {
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $startup_id = $adminLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $startup_id = $accountLogin->startup_id;
+        }
         $discount = $this->Discounts->newEmptyEntity();
         if ($this->request->is('post')) {
             $discount = $this->Discounts->patchEntity($discount, $this->request->getData());
+            // debug();die();
             $discount->create_uid = $this->currentUser->id;
             $discount->write_uid = $this->currentUser->id;
+            $discount->startup_id = $startup_id;
+            $discount->end_date = $this->request->getData('date');
             $discount->uuid = Text::uuid();
-            // debug($discount);
-            // exit();
+            $discount->gender_id = $this->request->getData('gender_id');
             if ($this->Discounts->save($discount)) {
                 $this->Flash->success(__('The discount has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The discount could not be saved. Please, try again.'));
         }
-        $this->set(compact('discount'));
+        $genders = $this->Discounts->Genders->find('list', limit: 200)->where(['startup_id'=>$startup_id])->all();
+        $this->set(compact('discount', 'genders'));
     }
+
 
     /**
      * Edit method
@@ -69,18 +94,31 @@ class DiscountsController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit($id)
     {
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $startup_id = $adminLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $startup_id = $accountLogin->startup_id;
+        }
         $discount = $this->Discounts->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $discount = $this->Discounts->patchEntity($discount, $this->request->getData());
+            $discount->end_date = $this->request->getData('date');
+            // debug($discount);
+            // die();
             if ($this->Discounts->save($discount)) {
                 $this->Flash->success(__('The discount has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The discount could not be saved. Please, try again.'));
         }
-        $genders = $this->Discounts->Genders->find('list', limit: 200)->all();
+        $genders = $this->Discounts->Genders->find('list', limit: 200)->where(['startup_id'=>$startup_id])->all();
         $this->set(compact('discount', 'genders'));
     }
 
@@ -91,6 +129,7 @@ class DiscountsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
+    
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);

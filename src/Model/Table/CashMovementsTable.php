@@ -52,8 +52,13 @@ class CashMovementsTable extends Table
             'foreignKey' => 'cash_box_id',
             'joinType' => 'INNER',
         ]);
-        $this->belongsTo('Users', [
+        
+        $this->belongsTo('Accounts', [
             'foreignKey' => 'user_id',
+            'joinType' => 'INNER',
+        ]);
+          $this->belongsTo('Inspections', [
+            'foreignKey' => 'inspection_id',
             'joinType' => 'INNER',
         ]);
     }
@@ -115,11 +120,12 @@ class CashMovementsTable extends Table
      * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
      * @return \Cake\ORM\RulesChecker
      */
+    
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['cash_box_id'], 'CashBoxes'), ['errorField' => 'cash_box_id']);
-        $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
-
+        $rules->add($rules->existsIn(['user_id'], 'Accounts'), ['errorField' => 'user_id']);
+        $rules->add($rules->existsIn(['inspection_id'], 'Inspections'), ['errorField' => 'inspection_id']);
         return $rules;
     }
 }

@@ -54,6 +54,7 @@ class InspectionsTable extends Table
             'foreignKey' => 'customer_id',
             'joinType' => 'INNER',
         ]);
+        
         $this->belongsTo('Genders', [
             'foreignKey' => 'gender_id',
             'joinType' => 'INNER',

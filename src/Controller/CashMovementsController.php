@@ -75,6 +75,13 @@ class CashMovementsController extends AppController
         $this->set(compact('cashMovements', 'search', 'from', 'to'));
     }
 
+    public function cashboxstate() {
+        $query = $this->CashMovements->find()
+        ->contain(['CashBoxes','Inspections']);
+        $cashMovements = $this->paginate($query);
+        $this->set(compact('cashMovements'));
+    }
+
 
     /**
      * View method
@@ -83,10 +90,12 @@ class CashMovementsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view($uuid)
     {
-         $this->CashMovements = $this->fetchTable('CashMovements');
-        $cashMovement = $this->CashMovements->get($id, contain: ['CashBoxes', 'Users']);
+        $this->CashMovements = $this->fetchTable('CashMovements');
+        // $cashMovement = $this->CashMovements->get($id, contain: ['CashBoxes', 'Accounts']);
+        $cashMovement = $this->CashMovements->find()->where(['CashMovements.uuid'=>$uuid])->contain(['CashBoxes','Accounts'])->first();
+        // $cashMovement = $this->CashMovements->get($id, contain: ['CashBoxes', 'Accounts']);
         $this->set(compact('cashMovement'));
     }
 

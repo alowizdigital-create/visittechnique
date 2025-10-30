@@ -20,7 +20,8 @@ class MessagesController extends AppController
         exit();
         $to = $data['to'] ?? '';
         $message = $data['message'] ?? '';
-        $from = 'vehicontrols'; 
+        $from = 'vehicontrols';
+
 
         $http = new Client();
 
@@ -44,6 +45,57 @@ class MessagesController extends AppController
         ]);
     }
 
+    public function sent()
+    {
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
+            $query = $this->Messages->find()
+            ->where(['Messages.startup_id' => $startup_id,'Messages.status'=>'sent'])
+            ->contain(['Inspections', 'Customers'])
+             ->limit(200)
+             ->order(['Messages.id' => 'DESC']); 
+            $messages = $query->all()->toArray(); 
+        $this->set(compact('messages'));
+    }
+
+      public function pending()
+    {
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
+            $query = $this->Messages->find()
+            ->where(['Messages.startup_id' => $startup_id,'Messages.status'=>'pending'])
+            ->contain(['Inspections', 'Customers'])
+             ->limit(200)
+             ->order(['Messages.id' => 'DESC']); 
+            $messages = $query->all()->toArray(); 
+        $this->set(compact('messages'));
+    }
+
+
+
+
     /**
      * Index method
      *
@@ -51,9 +103,26 @@ class MessagesController extends AppController
      */
     public function index()
     {
-        $query = $this->Messages->find()
-            ->contain(['Inspections', 'Customers']);
-        $messages = $this->paginate($query);
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
+            $query = $this->Messages->find()
+            ->where(['Messages.startup_id' => $startup_id])
+            ->contain(['Inspections', 'Customers'])
+             ->limit(200)
+             ->order(['Messages.id' => 'DESC']); 
+            $messages = $query->all()->toArray(); 
+
         $this->set(compact('messages'));
     }
 

@@ -50,7 +50,7 @@ class CashBoxesTable extends Table
         $this->hasMany('CashMovements', [
             'foreignKey' => 'cash_box_id',
         ]);
-        $this->belongsTo('Users', [
+        $this->belongsTo('Accounts', [
             'foreignKey' => 'responsable_id',
             'joinType' => 'INNER',
         ]);
@@ -112,7 +112,7 @@ class CashBoxesTable extends Table
 
      public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['responsable_id'], 'Users'), ['errorField' => 'responsable_id']);
+        $rules->add($rules->existsIn(['responsable_id'], 'Accounts'), ['errorField' => 'responsable_id']);
         return $rules;
     }
 }

@@ -1,8 +1,6 @@
-<!-- Content Wrapper -->
-  
-<div class="wrapper" style="margin-top: 84px;">
-
-<div class="content-wrapper">
+<div class="wrapper" style="margin-top: 44px;">
+    <div class="content-wrapper">
+        <body class="hold-transition sidebar-mini">
     <section class="content">
       <div class="container-fluid" >
      <h5></h5>

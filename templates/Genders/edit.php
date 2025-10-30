@@ -1,12 +1,10 @@
-<div class="wrapper" style="margin-top: 44px;">
-<div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
+ <body class="hold-transition sidebar-mini" style="padding-top: 35px;">
     <!-- Content Header (Page header) -->
     <section class="content-head">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 style="margin-left: 20px; margin-top: 20px;">  <i class="nav-icon fas fa-plus"></i>Mise à jour </h1>
+            <h1 style="margin-left: 20px; margin-top: 20px;">  <i class="nav-icon fas fa-plus"></i>Nouveau </h1>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -37,6 +35,20 @@
                 </div>
               </div>
             </div>
+              <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                     <?= $this->Form->control('price',['label'=>'Frais de visite','class'=>'form-control select2','placeholder'=>'Ex: Vehicule lourd (VL)']); ?>
+                </div>
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                     <?= $this->Form->control('duration',['label'=>'Durée en mois','class'=>'form-control select2','placeholder'=>'Ex: 3','options'=>['3'=>'3','6'=>'6','9'=>'9','12'=>'12']]); ?>
+                </div>
+              </div>
+            </div>
              <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
@@ -44,7 +56,7 @@
                 </div>
               </div>
             </div>
-           <?= $this->Form->button(__('Mettre à jour'), ['class' => 'btn btn-primary form-control select2','style'=>'margin-top:25px']) ?>
+           <?= $this->Form->button(__('Sauvegarder'), ['class' => 'btn btn-primary form-control select2','style'=>'margin-top:25px']) ?>
             <?= $this->Form->end() ?>
             </div>
           </div>
@@ -70,4 +82,3 @@
   <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
-

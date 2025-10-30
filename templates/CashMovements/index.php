@@ -1,4 +1,6 @@
-<div class="content-wrapper" style="margin-top:74px">
+<div class="wrapper" style="margin-top: 44px;">
+    <div class="content-wrapper">
+        <body class="hold-transition sidebar-mini">
   <section class="content-head">
     <div class="container-fluid">
       <div class="row mb-2">

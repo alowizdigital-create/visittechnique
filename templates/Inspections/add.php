@@ -1,6 +1,6 @@
 <div class="wrapper" style="margin-top: 44px;">
-<div class="content-wrapper">
-<body class="hold-transition sidebar-mini">
+    <div class="content-wrapper">
+        <body class="hold-transition sidebar-mini">
     <!-- Content Header (Page header) -->
     <section class="content-head">
       <div class="container-fluid">

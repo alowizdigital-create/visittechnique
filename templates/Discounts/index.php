@@ -1,6 +1,5 @@
 
-<div class="wrapper" style="margin-top: 44px;">
-  <div class="content-wrapper" >
+  <body class="hold-transition sidebar-mini" style="padding-top: 20px;">
   <section class="content" >
     <div class="container-fluid">
       <div class="row" >
@@ -23,18 +22,24 @@
                   <tr>
                     <th>#</th>
                     <th><?= __('Montant') ?></th>
-                 
+                    <th><?= __('Genre de vehicule') ?></th>
+                     <th><?= __('Statut') ?></th>
                     <th class="text-center"><?= __('Actions') ?></th>
                   </tr>
                 </thead>
                 <tbody>
                 <?php $count = 1; foreach($discounts as $discount): ?>
+             
                 <tr>
                     <td><?= $count++ ?></td>
                      <td><?= h($discount->amount) ?></td>
-                  
+                     <td><?= h($discount->gender->name) ?></td>
+                     <?php if ($discount->end_date < $todayDate ) : ?>
+                              <td class="" >Active</td>
+                     <?php else:  ?>
+                              <td>Inactive</td>
+                     <?php endif; ?>
                     <td class="actions">
-                          <?= $this->Html->link(__('<i class="fas fa-eye" style="color:#000;"></i>'), ['action' => 'view', $discount->id], ['escape' => false, 'title'=>'Consulter']) ?>
                           <?= $this->Html->link(__('<i class="fas fa-edit" style="color:#000;"></i>'), ['action' => 'edit', $discount->id], ['escape' => false,'title'=>'Modifier']) ?>
                          <?= $this->Form->postLink(
                               '<i class="fas fa-trash-alt" style="color:#dc3545;"></i>',
@@ -65,10 +70,6 @@
   </div>
   <strong>Copyright &copy; 2025 <a href="#">X-technova</a></strong> Tous droits réservés.
 </footer>
-
-
-
-
 
 
 
