@@ -59,7 +59,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                     <?= $this->Form->control('date',['type'=>'date','label'=>'Genre','class'=>'form-control select2','placeholder'=>'Ex: Vehicule lourd']); ?>
+                     <?= $this->Form->control('date',['type'=>'date','label'=>'Date de la derniere visite','class'=>'form-control select2','placeholder'=>'Ex: Vehicule lourd']); ?>
                 </div>
               </div>
             </div>

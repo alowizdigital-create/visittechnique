@@ -68,15 +68,25 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/rootAjaxaddVehicles', ['controller' => 'Users', 'action' => 'addVehicles']);
         $builder->connect('/rootAjaxnewRelance', ['controller' => 'Users', 'action' => 'newRelance']);
         $builder->connect('/rootAjaxConfirmPayment', ['controller' => 'Users', 'action' => 'confirmPayment']);
+        $builder->connect('/rootAjaxConfirmRelance', ['controller' => 'Users', 'action' => 'confirmRelance']);
         $builder->connect('/users/search-phone', ['controller' => 'Users', 'action' => 'searchPhone']);
         $builder->connect('/messages/test-send', ['controller' => 'Messages', 'action' => 'testSend']);
-       
+        
         
         // Nouvelle route pour le tableau de bord d'administration sans préfixe.
         $builder->connect('/accounts/login', ['controller' => 'Accounts', 'action' => 'login']);
         $builder->connect('/users/dashboard', ['controller' => 'Users', 'action' => 'dashboard']);
         
         $builder->connect('/updateloginStardtup',['controller'=>'Startups','action'=>'changeStartup']);
+        $builder->connect('/updateloginStardtup2',['controller'=>'Startups','action'=>'changeStartup2']);
+
+
+        // Les routes pour la campagne publicitaire
+
+        $builder->connect('/send-sms', ['controller' => 'Messages', 'action' => 'sendSms']);
+
+        $builder->connect('/send-campaign-sms', ['controller' => 'Messages', 'action' => 'sendCampaignSms']);
+      
         /* '
          * ...and connect the rest of 'Pages' controller's URLs.
          */

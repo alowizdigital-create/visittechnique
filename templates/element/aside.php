@@ -23,9 +23,8 @@
             </a>
           </li>
           <?php if ($userAuth->role == 'admin' ||  $userAuth->role == 'directeur' ) : ?> 
-
             <li class="nav-item">
-            <a href="<?= $this->Url->build(['controller' => 'Discounts', 'action' => 'dashboard']) ?>" class="nav-link">
+            <a href="<?= $this->Url->build(['controller' => 'Discounts', 'action' => 'index']) ?>" class="nav-link">
                 <i class="nav-icon fas fa-percentage"></i>
                <p><?= __('Reductions') ?></p>
             </a>
@@ -45,7 +44,28 @@
                  <i class="nav-icon fas fa-cash-register"></i>
                 <p><?= __('Caisse(s)') ?></p>
                 <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= $this->Url->build(['controller' => 'Contacts', 'action' => 'index']) ?>" class="nav-link">
+                 <i class="nav-icon fas fa-cash-register"></i>
+                <p><?= __('Contact') ?></p>
+                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
+            </a>
+          </li>
+           <li class="nav-item">
+            <a href="<?= $this->Url->build(['controller' => 'Teams', 'action' => 'index']) ?>" class="nav-link">
+                 <i class="nav-icon fas fa-cash-register"></i>
+                <p><?= __('Equipes') ?></p>
+                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
                
+            </a>
+          </li>
+            <li class="nav-item">
+            <a href="<?= $this->Url->build(['controller' => 'Messages', 'action' => 'shedule']) ?>" class="nav-link">
+                 <i class="nav-icon fas fa-cash-register"></i>
+                <p><?= __('Message(s) rapide') ?></p>
+                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
             </a>
           </li>
           <?php if ($userAuth->role == 'admin' ||  $userAuth->role == 'directeur' ) : ?> 

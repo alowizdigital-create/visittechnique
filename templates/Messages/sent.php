@@ -13,6 +13,7 @@
                         <th>#</th>
                         <th>Client</th>
                         <th>Numéro</th>
+                        <th>Immatriculation</th>
                         <th>Date d'envoi</th>
                         <th>Statut</th>
                         <th>Actions</th>
@@ -27,6 +28,7 @@
                         <td><?= $count++ ?></td>
                         <td><?= h($message->customer->name) ?></td>
                         <td><?= h($message->receiver) ?></td>
+                        <td><?= h($message->inspection->vehicle->registration_number ?? '-') ?></td>
                         <td><?= h($message->sent_date->nice()) ?></td>
                         <td><span class="<?= $statusClass ?>"><?= h($message->status) ?></span></td>
                         <td class="actions-cell">

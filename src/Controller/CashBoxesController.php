@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 namespace App\Controller;
+
+use Cake\I18n\Date;
 use Cake\Utility\Text;
+use Cake\Collection\Collection;
 
 use function PHPUnit\Framework\isNull;
 
@@ -18,6 +21,170 @@ class CashBoxesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
+
+
+   public function indexLine()
+{
+    $user = $this->currentUser;
+
+    $Accounts = $this->fetchTable('Accounts');
+    $Admins   = $this->fetchTable('Admins');
+    $CashBoxes = $this->fetchTable('CashBoxes');
+    $CashMovements = $this->fetchTable('CashMovements');
+
+    // 🔹 Récupération du user (admin ou account)
+    $userData = $Admins->findById($user->id)->first();
+
+    if (!$userData) {
+        $userData = $Accounts->findById($user->id)->first();
+    }
+
+    // 🔹 Récupération des caisses
+    if (in_array($userData->role, ['admin', 'directeur'])) {
+
+        $queryCashBoxes = $CashBoxes->find()->where([
+            'CashBoxes.create_uid' => $user->id,
+            'CashBoxes.startup_id' => $userData->startup_id
+        ]);
+
+    } else {
+
+        $queryCashBoxes = $CashBoxes->find()->where([
+            'CashBoxes.responsable_id' => $user->id
+        ]);
+    }
+
+    $cashBoxes = $this->paginate($queryCashBoxes);
+
+    // 🔹 Responsables & collaborateurs
+    $responsables = $Accounts->find('list', [
+            'keyField' => 'id',
+            'valueField' => 'username'
+        ])
+        ->where(['startup_id' => $userData->startup_id])
+        ->toArray();
+
+    $myCollabots = $responsables;
+
+    // 🔹 Récupération de la caisse de l'utilisateur
+    $mycashbox = $CashBoxes->find()
+        ->where(['responsable_id' => $userData->id])
+        ->first();
+
+    if ($mycashbox) {
+        $mycashboxId = $mycashbox->id;
+
+        // reset notification
+        $mycashbox->notification = 0;
+        $CashBoxes->save($mycashbox);
+
+    } else {
+        $mycashboxId = 0;
+    }
+
+    // 🔹 Requête principale CashMovements
+    $query = $CashMovements->find()
+        ->contain([
+            'CashBoxes',
+            'Accounts',
+            'Inspections' => ['Vehicles' => ['Customers']]
+        ])
+        ->leftJoinWith('Inspections')
+        ->leftJoinWith('Inspections.Vehicles')
+        ->leftJoinWith('Inspections.Vehicles.Customers')
+        ->where([
+            'OR' => [
+                ['CashMovements.create_uid' => $userData->id],
+                ['CashMovements.cash_box_id' => $mycashboxId],
+                ['CashMovements.sender' => $mycashboxId],
+            ]
+        ])
+        ->order(['CashMovements.created' => 'DESC']);
+
+    // 🔍 Filtres
+    $search  = $this->request->getQuery('search');
+    $search2 = $this->request->getQuery('search2');
+    $from    = $this->request->getQuery('from');
+    $to      = $this->request->getQuery('to');
+
+    if (!empty($search)) {
+        $query
+            ->leftJoinWith('CashBoxes')
+            ->leftJoinWith('Accounts')
+            ->andWhere([
+                'OR' => [
+                    'CashMovements.type LIKE' => "%$search%",
+                    'CashBoxes.name LIKE' => "%$search%",
+                    'Accounts.username LIKE' => "%$search%",
+                ]
+            ]);
+    }
+
+    if (!empty($search2)) {
+        $query
+            ->leftJoinWith('Inspections.Vehicles.Customers')
+            ->andWhere([
+                'OR' => [
+                    'Vehicles.registration_number LIKE' => "%$search2%",
+                    'Customers.name LIKE' => "%$search2%",
+                ]
+            ]);
+    }
+
+    if (!empty($from)) {
+        $query->andWhere([
+            'CashMovements.created >=' => $from . ' 00:00:00'
+        ]);
+    }
+
+    if (!empty($to)) {
+        $query->andWhere([
+            'CashMovements.created <=' => $to . ' 23:59:59'
+        ]);
+    }
+
+    // 🔹 Pagination
+    $paginateOptions = [
+        'order' => ['CashMovements.created' => 'DESC']
+    ];
+
+    if (empty($search) && empty($from) && empty($to)) {
+        $paginateOptions['limit'] = 5;
+    }
+
+    $cashMovements = $this->paginate($query, $paginateOptions);
+
+    // 🔹 Montants
+    $amount = $CashBoxes->find()
+        ->where(['responsable_id' => $userData->id])
+        ->first();
+
+    $amountInit   = $amount->solde_initial ?? 0;
+    $amountActuel = $amount->solde_actuel ?? 0;
+    $amountInput  = $amount->cashinput ?? 0;
+    $amountInout  = $amount->cashinout ?? 0;
+
+    // 🔹 Envoi vers la vue
+    $this->set(compact(
+        'responsables',
+        'cashBoxes',
+        'amountInout',
+        'myCollabots',
+        'userData',
+        'cashMovements',
+        'search',
+        'from',
+        'amountInit',
+        'amountInput',
+        'amountActuel',
+        'to'
+    ));
+}
+
+
+
+
+
 
 
     public function index()
@@ -43,6 +210,21 @@ class CashBoxesController extends AppController
         else{ 
             $query = $this->CashBoxes->find()->where(['responsable_id'=> $this->currentUser->id]);
         }
+
+
+        if ($userData->role == 'admin'|| $userData->role == 'directeur') {
+        $query = $this->CashBoxes->find()
+        ->where([
+            'create_uid'=>$this->currentUser->id,
+            'Cashboxes.startup_id'=> $userData->startup_id
+        ]);
+    } else { 
+        $query = $this->CashBoxes->find()
+        ->where(['responsable_id'=> $this->currentUser->id]);
+    }
+    
+
+
         $cashBoxes = $this->paginate($query);
         $mystartup =  $userData->startup_id;
 
@@ -59,49 +241,15 @@ class CashBoxesController extends AppController
         $this->fetchTable('CashBoxes');
         $this->fetchTable('Accounts');
 
-        // Utilisateur courant
-        $user = $this->currentUser->id;
-
-        // recover my cashBox 
         $mycashbox = $this->CashBoxes->find()->where(['responsable_id'=> $userData->id])->first();
         if ($mycashbox) {
             $mycashboxId  = $mycashbox->id;
+            $mycashbox->notification = 0;
+            $this->CashBoxes->save($mycashbox);
         } else{
           $mycashboxId  = 0;
         }
-        // Decrementation des notifications
-        $mycashbox->notification = 0;
-
-        $this->CashBoxes->save($mycashbox);
         
-        // debug($mycashbox);die();
-
-        // debug($mycashboxId);die();
-        // Base query
-        // $query = $CashMovements->find()
-        //     ->contain([
-        //         'CashBoxes',
-        //         'Accounts',
-        //         'Inspections' => [
-        //             'Vehicles' => ['Customers']
-        //         ]
-        //     ])
-        //     ->where([
-        //         'OR' => [
-        //             ['CashMovements.create_uid' => $userData->id],
-        //             ['CashMovements.cash_box_id' => $mycashboxId],
-        //             ['CashMovements.sender' => $mycashboxId],
-        //         ]
-        //     ])
-        //     ->order(['CashMovements.created' => 'DESC']);
-
-
-    //         $query = $CashMovements->find()
-    // ->contain([
-    //     'CashBoxes',
-    //     'Accounts',
-    //     'Inspections' => ['Vehicles' => ['Customers']]
-    // ])
 
     $query = $CashMovements->find()
     // 1. UTILISER CONTAIN() POUR CHARGER LES DONNÉES DANS LES ENTITÉS PHP
@@ -168,12 +316,16 @@ class CashBoxesController extends AppController
             $query->andWhere(['CashMovements.created <=' => $to . ' 23:59:59']);
         }
 
+        $today = new \DateTime();
+        $todayDate = $today->format('Y-m-d');
         // --- Options de pagination ---
         $paginateOptions = ['order' => ['CashMovements.created' => 'DESC']];
 
         // Si pas de filtre, limiter aux 2 dernières opérations
-        if (empty($search) && empty($from) && empty($to)) {
-            $paginateOptions['limit'] = 12;
+       if (empty($search) && empty($from) && empty($to)) {
+            // Apply the limit
+            $paginateOptions['limit'] = 5;
+            
         }
 
         // Pagination
@@ -184,12 +336,257 @@ class CashBoxesController extends AppController
         $amountActuel = $amount->solde_actuel ?? 0;
         $amountInput = $amount->cashinput ?? 0;
         $amountInout = $amount->cashinout ?? 0;
+        // debug($amountInout);
+        // die();
  
     $this->set(compact('responsables','cashBoxes','amountInout','myCollabots','userData','cashMovements', 'search', 'from', 'amountInit','amountInput','amountActuel','to'));
     }
 
+
+    public function index5()
+{
+    $user = $this->currentUser;
+    $accountTable = $this->fetchTable('Accounts');
+    $adminTable = $this->fetchTable('Admins');
+
+    $adminLogin = $adminTable->findById($user->id)->first();
+
+    if ($adminLogin) {
+        $accountLogin = $adminTable->findById($user->id)->first();
+        $adminLoginId = $accountLogin->id;
+        $userData = $adminTable->find()->where(['id'=> $adminLoginId])->first();
+    } else {
+        $accountLogin = $accountTable->findById($user->id)->first();
+        $acountLoginId = $accountLogin->id;
+        $userData = $accountTable->find()->where(['id'=> $acountLoginId])->first();
+    }
+
+    $this->CashBoxes = $this->fetchTable('CashBoxes');
+
+    if ($userData->role == 'admin'|| $userData->role == 'directeur') {
+        $query = $this->CashBoxes->find()
+        ->where([
+            'create_uid'=>$this->currentUser->id,
+            'Cashboxes.startup_id'=> $userData->startup_id
+        ]);
+    } else { 
+        $query = $this->CashBoxes->find()
+        ->where(['responsable_id'=> $this->currentUser->id]);
+    }
+
+    $cashBoxes = $this->paginate($query);
+    $mystartup =  $userData->startup_id;
+
+    $responsables = $accountTable->find('list', keyField: 'id', valueField: 'username')
+        ->where(['startup_id'=> $mystartup])
+        ->toArray();
+
+    $myCollabots = $accountTable->find('list', keyField: 'id', valueField: 'username')
+        ->where(['startup_id'=> $mystartup])
+        ->toArray();
+
+    $CashMovements = $this->fetchTable('CashMovements');
+    $this->fetchTable('Accounts');
+
+    $mycashbox = $this->CashBoxes->find()
+        ->where(['responsable_id'=> $userData->id])
+        ->first();
+
+    if ($mycashbox) {
+        $mycashboxId  = $mycashbox->id;
+        $mycashbox->notification = 0;
+        $this->CashBoxes->save($mycashbox);
+    } else{
+        $mycashboxId  = 0;
+    }
+
+    $query = $CashMovements->find()
+        ->contain([
+            'CashBoxes',
+            'Accounts',
+            'Inspections' => ['Vehicles' => ['Customers']]
+        ])
+        ->leftJoinWith('Inspections')
+        ->leftJoinWith('Inspections.Vehicles')
+        ->leftJoinWith('Inspections.Vehicles.Customers')
+
+        ->where([
+            'OR' => [
+                ['CashMovements.create_uid' => $userData->id],
+                ['CashMovements.cash_box_id' => $mycashboxId],
+                ['CashMovements.sender' => $mycashboxId],
+            ]
+        ])
+        ->order(['CashMovements.created' => 'DESC']);
+
+    $search = $this->request->getQuery('search');
+    $search2 = $this->request->getQuery('search2');
+    $from = $this->request->getQuery('from');
+    $to = $this->request->getQuery('to');
+    $totalQuery = $CashMovements->find();
+
+
+   // appliquer filtres
+$query = $this->applyFilters($query, $search, $search2, $from, $to);
+$totalQuery = $this->applyFilters($totalQuery, $search, $search2, $from, $to);
+
+
+ 
+
+  
+// pagination
+$cashMovements = $this->paginate($query);
+
+// total
+// $totalAmount = $totalQuery
+//     ->select([
+//         'total' => $totalQuery->func()->sum('CashMovements.montant')
+//     ])
+//     ->enableHydration(false)
+//     ->first()['total'] ?? 0;
+   
+    /* =========================
+    ETAT DE CAISSE
+    ========================= */
+
+    if (!empty($search) || !empty($search2) || !empty($to) || !empty($from)) {
+
+    $montants = $totalQuery
+    ->select(['CashMovements.montant'])
+    ->enableHydration(false)
+    ->toArray();
+    //   debug($montants);
+    // die();
+    $total = array_sum(array_column($montants, 'montant'));
+
+        $totalAmount = $totalQuery
+        ->select([
+            'total' => $totalQuery->func()->sum('CashMovements.montant')
+        ])
+        ->enableHydration(false)
+        ->first()['total'] ?? 0;
+        // debug($totalQuery);
+        // die();
+    } else{
+        $CashMovements = $this->fetchTable('CashMovements');
+        $subquery = $CashMovements->find()
+            ->select([
+                'montant' => 'CashMovements.montant'
+            ])
+            ->where(['user_id' => $userData->id])
+            ->order(['created' => 'DESC'])
+            ->limit(5);
+
+        $query = $CashMovements->find();
+        $totalAmount = $query
+            ->select([
+                'total' => $query->func()->sum('montant')
+            ])
+            ->from(['t' => $subquery])
+            ->enableHydration(false)
+            ->first()['total'] ?? 0;
+        //        debug($totalAmount);
+        // die();
+    }
+
+    
+    /* =========================
+       SOLDE CAISSE
+       ========================= */
+
+    $today = new \DateTime();
+    $todayDate = $today->format('Y-m-d');
+
+    $amount = $this->CashBoxes->find()
+        ->where(['responsable_id'=> $userData->id])
+        ->first();
+
+
+
+        $amount = $this->CashBoxes->find()->where(['responsable_id'=> $userData->id])->first();
+        $amountInit = $amount->solde_initial ?? 0;
+        $amountActuel = $amount->solde_actuel ?? 0;
+        $amountInput = $amount->cashinput ?? 0;
+        $amountInout = $amount->cashinout ?? 0;
+    
+    //    debug($amountInput);
+    //     die();
+
+
+
+    $amountInit = $amount->solde_initial ?? 0;
+    $amountActuel = $amount->solde_actuel ?? 0;
+    // $amountInput = $this->fetchTable('CashMovements')->find()
+    // ->where(['type'=>'entrée','created'>= $todayDate,'user_id'=>$userData->id])
+    // ->select(['tot'=>  $totalQuery->func()->sum('CashMovements.montant') ])
+    //  ->enableHydration(false)
+    // ->first()['tot'] ?? 0;
+
     
 
+                                        // debug($amountInput);
+                                        // die();
+    //  $amountInout = $this->fetchTable('CashMovements')->find()
+    // ->where(['type'=>'sortie','created'>= $todayDate,'user_id'=>$userData->id])
+    // ->select(['tot'=>  $totalQuery->func()->sum('CashMovements.montant') ])
+    //  ->enableHydration(false)
+    // ->first()['tot'] ?? 0;
+    // $amountInput = 9;
+
+    $this->set(compact(
+        'responsables',
+        'cashBoxes',
+        'amountInout',
+        'myCollabots',
+        'userData',
+        'cashMovements',
+        'search',
+        'from',
+        'amountInit',
+        'amountInput',
+        'amountActuel',
+        'to',
+        'totalAmount'
+    ));
+}
+
+
+private function applyFilters($query, $search, $search2, $from, $to)
+{
+    if (!empty($search)) {
+        $query
+            ->leftJoinWith('CashBoxes')
+            ->leftJoinWith('Accounts')
+            ->andWhere([
+                'OR' => [
+                    'CashMovements.type LIKE' => "%$search%",
+                    'CashBoxes.name LIKE' => "%$search%",
+                    'Accounts.username LIKE' => "%$search%",
+                ]
+            ]);
+    }
+
+    if (!empty($search2)) {
+        $query
+            ->leftJoinWith('Inspections.Vehicles.Customers')
+            ->andWhere([
+                'OR' => [
+                    'Vehicles.registration_number LIKE' => "%$search2%",
+                    'Customers.name LIKE' => "%$search2%",
+                ]
+            ]);
+    }
+
+    if (!empty($from)) {
+        $query->andWhere(['CashMovements.created >=' => $from . ' 00:00:00']);
+    }
+
+    if (!empty($to)) {
+        $query->andWhere(['CashMovements.created <=' => $to . ' 23:59:59']);
+    }
+
+    return $query;
+}
 
 
     public function index2()
@@ -280,6 +677,7 @@ class CashBoxesController extends AppController
         if (!empty($to)) {
             $query->andWhere(['CashMovements.created <=' => $to . ' 23:59:59']);
         }
+      
 
         // --- Options de pagination ---
         $paginateOptions = ['order' => ['CashMovements.created' => 'DESC']];
@@ -539,6 +937,8 @@ class CashBoxesController extends AppController
     public function shareCashBox(){
         // Recuperer les données
         $data = $this->request->getData();
+        // debug($data);
+        // die();
         $receiver = $data['receiver'];
         $uuid = $data['cashbox_uuid'];
         $commit = $data['commit'];
@@ -575,7 +975,8 @@ class CashBoxesController extends AppController
              $mycashBox->cashinout += $data['amount'];
              $receivercashBox->notification += 1;
              $receivercashBox->solde_actuel += $data['amount'];
-              
+              $receivercashBox->cashinput += $data['amount'];
+            //  debug($receivercashBox);die();
             // debug($receivercashBox);die();
              if ($this->fetchTable('Cashboxes')->save($receivercashBox) && $this->fetchTable('Cashboxes')->save($mycashBox)) {
                 // debug($mycashBox);exit();

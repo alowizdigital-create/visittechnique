@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Date de dernière visite') ?></th>
-                    <td><?= h($vehicle->lastvisitdate->nice()) ?></td>
+                    <td><?= h($vehicle->lastvisitdate) ?></td>
                 </tr>
             </table>
         </div>

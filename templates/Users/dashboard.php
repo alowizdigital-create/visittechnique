@@ -64,7 +64,6 @@
                     </a>
                 </div>
             </div>
-
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card p-3 text-center" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                     <h5 class="card-title mt-2">Relancer un client</h5>
@@ -119,7 +118,6 @@
     </div>
   </div>
 </div>
-
 
 <!-- Modal de création de vehicule -->
 <div class="modal fade" id="detaisModal" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
@@ -263,12 +261,12 @@ $(document).ready(function() {
     // Partie relance véhicule
     $('#newRelance').submit(function(e) {
         e.preventDefault();
-      
+        
         var data = {
             matricule: $('#inputRegister').val(),
             _csrfToken: myToken
         };
-        console.log(data);
+
         $.ajax({
             url: '/rootAjaxnewRelance',
             type: 'POST',
@@ -348,9 +346,9 @@ $('#confirmPaymentForm').submit(function(e) {
         gender_id: $('#inputGenderidHidden').val(),
         _csrfToken: myToken
     };
-    console.log(data);
+  
     $.ajax({
-        url: '/rootAjaxConfirmPayment',
+        url: '/rootAjaxConfirmRelance',
         type: 'POST',
         data: data,
         dataType: 'json',
@@ -358,7 +356,8 @@ $('#confirmPaymentForm').submit(function(e) {
             if (result.code == 200) {
                 $('#confirmPayment').modal('hide');
                 toastr.success(result.msg);
-                setTimeout(() => {
+                setTimeout(() => 
+                {
                     window.location = '/users/dashboard';
                 }, 2000);
             } else {

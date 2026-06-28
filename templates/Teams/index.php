@@ -1,3 +1,17 @@
+<?php
+
+// Couleurs AdvanceApp
+$primaryColor = '#0d837c';
+$darkColor = '#235467';
+$secondaryColor = '#3c7d9e';
+
+// 🔥 Voici les données temporaires utilisées pour la performance du trafic
+// $deliveryRate = 83; // Pourcentage de messages délivrés
+// $pendingRate = 16;  // Pourcentage de messages en attente
+// $failedRate = 2;    // Pourcentage de messages échoués
+
+$this->assign('title', 'Tableau de Bord');
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -22,6 +36,9 @@
             --spacing-sm: 0.5rem;
             --spacing-md: 1rem;
             --spacing-lg: 1.5rem;
+            --aa-primary: <?= $primaryColor ?>; 
+            --aa-dark: <?= $darkColor ?>;
+            --aa-secondary: <?= $secondaryColor ?>;
         }
 
         * {
@@ -378,17 +395,9 @@
             margin-top: var(--spacing-lg);
             gap: var(--spacing-sm);
         }
-
     </style>
-
 </head>
-
-<body>
-    <!-- === PRELOADER === -->
-<!-- <div id="preloader">
-    <div class="spinner"></div>
-</div> -->
-
+<body style="padding-top: 55px;"> 
     <div id="custom-alert" class="modal-backdrop" onclick="this.classList.remove('active')">
         <div class="modal-content" style="max-width: 400px;" onclick="event.stopPropagation()">
             <h4 id="alert-title" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Action</h4>
@@ -398,219 +407,106 @@
             </button>
         </div>
     </div>
-
-    <div class="main-container">
-
-        <header class="page-header">
-            <h1>
-                <i data-lucide="wallet"></i> Gestion des caisses
-            </h1>
-        </header>
-
-        <div class="stats-grid">
-            <div class="stat-card stat-input">
-                <p>Entrée(s)</p>
-                <p id="stat-input"><?= $this->Number->format($amountInput) ?? 0 ?></p>
-            </div>
-            <div class="stat-card stat-output">
-                <p>Sortie(s)</p>
-                <p id="stat-output"><?= $this->Number->format($amountInout) ?? 0 ?></p>
-            </div>
-            <div class="stat-card stat-current">
-                <p>Solde actuel</p>
-                <p id="stat-current"><?= $this->Number->format($amountActuel) ?? 0 ?></p>
-            </div>
-        </div>
-
         <div class="card">
             <div class="card-header">
                 <h2>
-                    <i data-lucide="list-checks"></i> Liste de caisses
+                    <i data-lucide="list-checks"></i> Liste de contacts
                 </h2>
-                <?php if ($userData->role == 'admin' || $userData->role == 'directeur'): ?>
-                          <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#newcahbox" > <?= __('Nouvelle caisse') ?><i data-lucide="plus"></i></a>
-                <?php endif; ?>
-                <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#outcash" > <?= __('Decaissement') ?></a>
-            </div>
+                  <div class="ml-auto">
+                        <!-- Bouton pour ouvrir le modal -->
+                        <button type="button" style="background-color:var(--aa-secondary);border-radius:8px;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">
+                            <i class="fas fa-upload me-2"></i>Importer des contacts
+                        </button>
 
+                       <?= $this->Html->link(__('Nouveau groupe'), ['action' => 'add'], [
+                        'class' => 'btn btn-sm btn-primary text-white',
+                        'style' => 'background-color:var(--aa-primary);color:white;border-radius:8px;'
+                      ]) ?>
+                  </div>
+            </div>
             <div class="table-container" id="cashbox-table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Nom de la caisse</th>
-                            <th>Solde actuel</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
+                            <th><?= __('#') ?></th>
+                            <th><?= __('Nom du groupe') ?></th>
+                            <th><?= __('Date de création') ?></th>
+                            <th class="actions"><?= __('Actions') ?></th>
                         </tr>
                     </thead>
                     <tbody id="cashbox-list-body">
-                        <?php $count = 1; foreach ($cashBoxes as $cashBox): ?>
+                        <?php $count = 1; foreach ($teams as $team): ?>
                             <tr>
-                                <td><?= $cashBox->notification ?></td>
-                                <td><?= h($cashBox->name) ?></td>
-                                <td><?= $this->Number->format($cashBox->solde_actuel) ?></td>
-                                <td>
-                                    <span class="status-<?= h($cashBox->statut) ?>">
-                                        <?= h($cashBox->statut) ?>
-                                    </span>
-                                </td>
-                                <td class="actions-cell">
-                                    <!-- <button type="button" data-uuid="<?= $cashBox->uuid ?>" onclick="prepareTransfer(this)" class="transfer-btn btn-small">
-                                        <i data-lucide="arrow-right"></i> Transferer
-                                    </button> -->
-                          <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>" data-uuid="<?= $cashBox->uuid ?>"  class="transfer-btn btn-small"  data-bs-toggle="modal" data-bs-target="#modalRelance" > <?= __('Transferer') ?></a>
+                                <td><?= $count ?></td>
+                                <td><?= h($team->name) ?></td>
+                                <td><?= h($team->created->nice()) ?></td>
+                                <td class="actions">
+                          <?= $this->Html->link(__('<i class="fas fa-eye" style="color:#000;"></i>'), ['action' => 'view', $team->uuid], ['escape' => false,'title'=>'Modifier']) ?>
+
+                                    <?= $this->Form->postLink(
+                                        '<i class="fas fa-trash-alt" style="color:#dc3545;"></i>',
+                                        ['action' => 'delete', $team->uuid],
+                                        [
+                                            'confirm' => __('Vous etes sur de vouloir supprimer le contact  de {0}?', $team->name),
+                                            'escape' => false,
+                                            'title' => 'Supprimer',
+                                        ]
+                                        ) ?>
                                 </td>
                             </tr>
-                        <?php $count++; endforeach; ?>
+                        <?php  endforeach; ?>
                     </tbody>
                 </table>
             </div>
         </div>
+</div>
 
-        <div class="card">
-            <div class="card-header">
-                <h2>
-                    <i data-lucide="trending-up"></i> Les opérations de la caisse
-                </h2>
-            </div>
-            <?= $this->Form->create(null, ['type' => 'get', 'id' => 'filter-form', 'class' => 'filter-form']) ?>
-                <div class="form-group form-group-flex">
-                    <label for="search">Type d'opération </label>
-                  <?= $this->Form->control('search', [
-                        'label' => false,
-                        'class' => 'form-control',
-                        'options' => [
-                            '' => '▼ Toutes les operations ',
-                            'entrée' => 'Encaissements',
-                            'Decaissement' => 'Sorties de fonds',
-                            'Transfert' => 'Transferts de fonds'
-                        ],
-                        'placeholder' => 'Mot-clé',
-                        'value' => $search ?? ''
-                    ]) ?>
-                </div>
-                <div class="form-group form-group-flex">
-                    <label for="search">Mot-clé </label>
-                  <?= $this->Form->control('search2', [
-                        'label' => false,
-                        'class' => 'form-control',
-                        'placeholder' => 'Mot-clé',
-                        'value' => $search2 ?? ''
-                    ]) ?>
-                </div>
-                <div class="form-group">
-                    <label for="from">Date de début</label>
-                    <?= $this->Form->control('from', [
-                        'label' => false,
-                        'type' => 'date',
-                        'class' => 'form-control',
-                        'value' => $from ?? ''
-                    ]) ?>
-                </div>
+<footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1030; background: #f8f9fa; padding: 10px 20px; border-top: 1px solid #dee2e6;">
+  <div class="float-right d-none d-sm-inline">
+    <b>Version</b> 3.2.0
+  </div>
+  <strong>Copyright &copy; 2025 <a href="#" style="color:var(--aa-primary);border-radius:8px;">AdvanceApp</a></strong> Tous droits réservés.
 
-                <div class="form-group">
-                    <label for="to">Date de fin</label>
-                    <?= $this->Form->control('to', [
-                        'label' => false,
-                        'type' => 'date',
-                        'class' => 'form-control',
-                        'value' => $to ?? ''
-                    ]) ?>
-                </div>
-                <button type="submit" class="btn btn-primary btn-icon-sm">
-                    <i data-lucide="search"></i> Rechercher
-                </button>
-            <?= $this->Form->end() ?>
+  <a href="https://wa.me/237656262480" style="color:var(--aa-primary);border-radius:8px;" target="_bank" style="margin-left: 20px;"> Contactez-nous sur Whatsapp</a>
+</footer>
 
-            <div class="table-container" id="operations-table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th><?= $this->Paginator->sort('type', 'Type') ?></th>
-                            <th><?= $this->Paginator->sort('cash_box_id', 'Caisse') ?></th>
-                            <th><?= $this->Paginator->sort('user_id', 'Utilisateur') ?></th>
-                            <th><?= $this->Paginator->sort('register', 'Immatriculation') ?></th>
-                            <th><?= $this->Paginator->sort('customer', 'Téléphone') ?></th>
-                            <th><?= $this->Paginator->sort('montant', 'Montant') ?></th>
-                            <th><?= $this->Paginator->sort('created', 'Date') ?></th>
-                            <th>Consulter</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($cashMovements as $cashMovement): ?>
-                            <tr>
-                                <td>
-                                    <span class="type-<?= strtolower(h($cashMovement->type)) ?>">
-                                        <?= h($cashMovement->type) ?>
-                                    </span>
-                                </td>
-                                <td><?= $cashMovement->cash_box->name ?? '' ?></td>
-                                <td><?= $cashMovement->account->username ?? '' ?></td>
-                                <td><?= $cashMovement->inspection->vehicle->registration_number ?? '' ?></td>
-                                <td><?= $cashMovement->inspection->vehicle->customer->phone ?? '' ?></td>
-                                <td><?= $this->Number->format($cashMovement->montant) ?></td>
-                                <td><?= $cashMovement->created?->i18nFormat('dd/MM/yyyy HH:mm') ?></td>
-                                <td class="actions-cell">
-                                    <a href="<?= $this->Url->Build(['controller'=>'CashMovements','action'=>'view', $cashMovement->uuid]) ?>" class="view-btn btn-small" >
-                                        <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div style="margin-top: var(--spacing-md); font-size: 0.875rem; color: var(--color-text-light); text-align: center;">
-                <div>Page 1 sur 10</div>
-            </div>
-        </div>
 
-    </div>
-
-<div class="modal fade" id="newcahbox" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
+<!-- Modal d'importation -->
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ModalAdd">Creer une caisse</h5>
+      <div class="modal-header bg-primar text-black">
+        <h5 class="modal-title" id="importModalLabel">Importer des contacts</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <?= $this->Form->create(NULL, ['id' => 'newCashboxes']) ?>
-        <fieldset>
-           <!-- Matricule -->
-          <div class="row mt-2">
-             <input type="hidden" id="cashbox_uuid" name="cashbox_uuid" value="">
-            <div class="col-12">
-              <?= $this->Form->control('name', [
-                'label' => 'Nom de la caisse :',
+        <?= $this->Form->create(null, [
+            'url' => ['action' => 'import'],
+            'type' => 'file',
+            'id' => 'importForm'
+        ]) ?>
+         <div class="mb-3">
+            <?= $this->Form->control('group_name', [
+                'label' => 'Nom du groupe',
                 'class' => 'form-control',
-                'placeholder' => 'EX: Caisse de serge Mbarga',
-                'id' => 'name',
                 'required' => true
-              ]) ?>
-            </div>
-          </div>
-           <div class="row mt-2">
-            <div class="col-12">
-              <?= $this->Form->control('responsable_id', [
-                'label' => 'Recepteur :',
+            ]) ?>
+        </div>
+        <div class="mb-3">
+            <?= $this->Form->control('file', [
+                'type' => 'file',
+                'label' => 'Choisir un fichier (.csv ou .xlsx)',
                 'class' => 'form-control',
-                'options'=> $responsables,
-                'placeholder' => 'EX: CM XX90 OICJ ',
-                'id' => 'responsable',
                 'required' => true
-              ]) ?>
-            </div>
-          </div>
-          
-        </fieldset>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-          <?= $this->Form->button(__('Créer'), ['class' => 'btn btn-primary']) ?>
+            ]) ?>
+        </div>
+
+       
+        <div class="text-end">
+            <?= $this->Form->button(__('Importer'), [
+                'class' => 'btn btn-primary',
+                'style' => 'background-color:var(--aa-primary);color:white;border-radius:8px;'
+            ]) ?>
         </div>
         <?= $this->Form->end() ?>
       </div>
@@ -618,117 +514,7 @@
   </div>
 </div>
 
-
-<!-- Modal de decaissement --> 
-   
-<div class="modal fade" id="outcash" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ModalAdd">Décaissement</h5>
-      </div>
-      <div class="modal-body">
-        <?= $this->Form->create(NULL, ['id' => 'outcashTransaction']) ?>
-        <fieldset>
-           <!-- Matricule -->
-          <div class="row mt-2">
-             <input type="hidden" id="cashbox_uuid" name="cashbox_uuid" value="">
-            <div class="col-12">
-              <?= $this->Form->control('nam', [
-                'label' => 'Montant :',
-                'class' => 'form-control',
-                'type'=>'number',
-                'placeholder' => 'EX: 5000',
-                'id' => 'nam',
-              ]) ?>
-            </div>
-          </div>
-           <div class="row mt-2">
-            <div class="col-12">
-              <?= $this->Form->control('responsabl', [
-                'label' => 'Recepteur :',
-                'type' => 'textarea',
-                'class' => 'form-control',
-                'placeholder' => 'EX : Achat huile moteur ',
-                'id' => 'responsabl',
-              ]) ?>
-            </div>
-          </div>
-          
-        </fieldset>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-          <?= $this->Form->button(__('Décaisser'), ['class' => 'btn btn-primary']) ?>
-        </div>
-        <?= $this->Form->end() ?>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-<!-- Modal de transfert de caisse  --> 
-
-
-<div class="modal fade" id="modalRelance" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ModalAdd">Transfert d'argent</h5>
-      </div>
-      <div class="modal-body">
-        <?= $this->Form->create(NULL, ['id' => 'newRelance']) ?>
-        <fieldset>
-           <!-- Matricule -->
-          <div class="row mt-2">
-             <input type="hidden" id="cashbox_uuid" name="cashbox_uuid" value="">
-            <div class="col-12">
-              <?= $this->Form->control('montant', [
-                'label' => 'Montant :',
-                'class' => 'form-control',
-                'placeholder' => 'EX: 50 000',
-                'id' => 'amount',
-                'required' => true
-              ]) ?>
-            </div>
-          </div>
-           <div class="row mt-2">
-            <div class="col-12">
-              <?= $this->Form->control('recepteur', [
-                'label' => 'Recepteur :',
-                'class' => 'form-control',
-                'options'=> $myCollabots,
-                'placeholder' => 'EX: CM XX90 OICJ ',
-                'id' => 'receiver',
-                'required' => true
-              ]) ?>
-            </div>
-          </div>
-           <div class="row mt-2">
-            <div class="col-12">
-              <?= $this->Form->control('commentaire', [
-                'label' => 'Rapport :',
-                'class' => 'form-control',
-                'placeholder' => ' ',
-                'type'=>'textarea',
-                'id' => 'commentaire',
-                'required' => true
-              ]) ?>
-            </div>
-          </div>
-        </fieldset>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-          <?= $this->Form->button(__('Transfere'), ['class' => 'btn btn-primary']) ?>
-        </div>
-        <?= $this->Form->end() ?>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         // Initialise les icônes Lucide après le chargement du DOM
@@ -840,7 +626,7 @@
             }
         });
     });
-</script>
+    </script>
 
     
 
@@ -912,21 +698,3 @@
     });
 </script>
 
-<!-- <script>
-    // Attendre que la page soit complètement chargée
-    window.addEventListener("load", function() {
-        const loader = document.getElementById("preloader");
-        loader.classList.add("hidden");
-
-        // Optionnel : supprimer complètement le div du DOM après animation
-        setTimeout(() => loader.remove(), 500);
-    });
-</script> -->
-
-
-</body>
-</html>
-
-
-
-  

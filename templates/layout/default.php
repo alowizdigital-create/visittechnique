@@ -1,3 +1,60 @@
+<style>
+            /* === PRELOADER === */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff; /* couleur de fond du preloader */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .preloader-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            animation: bounce 2s infinite;
+        }
+
+        /* Animation du logo */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Apparition fluide du contenu */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+
+</style>
 <script>
     let myToken = '<?= $this->request->getAttribute('csrfToken') ?>';
     let myUrl = '<?= $this->request->getParam('controller') ?>';
@@ -44,6 +101,17 @@
 </head>
 <!-- Ajoutez les classes AdminLTE pour un comportement fixe -->
 <body class="hold-transition sidebar-mini layout-fixed">
+     <!-- === PRELOADER === -->
+   <div id="preloader">
+        <div class="preloader-content">
+            <?= $this->Html->image('xtech.jpg', [
+                'class' => 'preloader-logo',
+                'alt' => 'XTech Logo'
+            ]) ?>
+        </div>
+    </div>
+
+
     <!-- Le "wrapper" est la structure principale d'AdminLTE -->
     <div class="wrapper">
         <!-- Incluez votre barre de navigation -->
@@ -64,7 +132,16 @@
                 </div> 
             </section>
         </div>
-      
+   <script>
+    window.addEventListener("load", function() {
+        const loader = document.getElementById("preloader");
+        loader.classList.add("hidden");
+
+        // Optionnel : suppression complète du DOM après animation
+        setTimeout(() => loader.remove(), 800);
+        });
+    </script>
+
 </body>
 </html>
 

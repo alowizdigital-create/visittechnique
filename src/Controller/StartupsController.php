@@ -105,11 +105,12 @@ class StartupsController extends AppController
     }
 
 
-
     public function changeStartup() 
     {
        $data = $this->request->getData();
        $uuid = $data['uuid'];
+    //    debug($uuid);
+    //    die();
        $startup = $this->Startups->findByUuid($uuid)->first();
        $startupAskLogin =  $startup->id;
        $adminsTable = $this->fetchTable('Admins');
@@ -133,6 +134,37 @@ class StartupsController extends AppController
                                   'msg'=>'Mutation effectuée avec succès.']);
        }
     }
+
+     public function changeStartup2() 
+    {
+       $data = $this->request->getData();
+       $uuid = $data['uuid'];
+    //    debug($uuid);
+    //    die();
+       $startup = $this->Startups->findByUuid($uuid)->first();
+       $startupAskLogin =  $startup->id;
+       $accountTable = $this->fetchTable('Accounts');
+       $account = $accountTable->findById($this->currentUser->id)->first();
+       $account->startup_id = $startupAskLogin;
+       if ($accountTable->save($account)) {
+        // 1. Récupérer l'objet utilisateur de la session
+        $currentUser = $this->Authentication->getIdentity();
+
+        // 2. Modifier la propriété de l'objet en mémoire
+        $currentUser->startup_id = $startupAskLogin;
+
+        // 3. Réécrire l'objet mis à jour dans la session
+        $this->Authentication->setIdentity($currentUser);
+
+        // 4. Déboguer pour confirmer que la session est mise à jour
+        // debug($this->Authentication->getIdentity());
+        // exit();
+
+           return $this->Json(['code'=>105,
+                                  'msg'=>'Mutation effectuée avec succès.']);
+       }
+    }
+
 
     /**
      * Edit method

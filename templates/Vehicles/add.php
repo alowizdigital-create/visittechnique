@@ -1,10 +1,10 @@
-<body class="hold-transition sidebar-mini" style="padding-top: 35px;">
+<body class="hold-transition sidebar-mini" style="padding-top: 40px;">
     <!-- Content Header (Page header) -->
     <section class="content-head">
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 style="margin-left: 20px; margin-top: 20px;">  <i class="nav-icon fas fa-plus"></i>Nouveau </h1>
+            <h1 style="margin-left: 20px; margin-top: 55px;">  <i class="nav-icon fas fa-plus"></i>Nouveau </h1>
           </div>
         </div>
       </div><!-- /.container-fluid -->
@@ -33,8 +33,7 @@
                  <div class="form-group">
                           <?=  $this->Form->control('custome', [
                               'label' => 'Client',
-                              'class' => 'form-control',
-                              'placeholder' => 'Ex: Mbarga mark'
+                              'class' => 'form-control'
                           ]); ?>
                   </div>
               </div>
@@ -45,7 +44,6 @@
                    <?= $this->Form->control('phone', [
                         'label' => 'Téléphone',
                         'class' => 'form-control',
-                        'type' => 'integer',
                         'id' => 'phone',
                         'placeholder' => 'Ex: 653990089'
                     ]); ?>
@@ -91,18 +89,36 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
- <footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1030; background: #f8f9fa; padding: 10px 20px; border-top: 1px solid #dee2e6;">
-  <div class="float-right d-none d-sm-inline">
-    <b>Version</b> 3.2.0
-  </div>
-  <strong>Copyright &copy; 2025 <a href="#">X-technova</a></strong> Tous droits réservés.
-</footer>
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
   </aside>
   <!-- /.control-sidebar -->
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script>
+    $(document).ready(function() {
+        // Cibler le formulaire généré par $this->Form->create($vehicle)
+        // Comme il n'a pas d'ID, on utilise le sélecteur 'form' (en supposant qu'il est le seul)
+        $('form').on('submit', function() {
+            // Cibler le bouton de soumission par sa classe ou son type
+            const submitButton = $(this).find('.btn-primary'); // Cibler spécifiquement le bouton bleu
+
+            // Vérification pour éviter les erreurs
+            if (submitButton.length) {
+                // 1. Désactiver le bouton pour empêcher les clics multiples
+                submitButton.prop('disabled', true);
+                
+                // 2. Changer le texte et ajouter une icône de chargement (spinner)
+                submitButton.html('<i class="fas fa-spinner fa-spin"></i> Sauvegarde en cours...');
+                
+                // Le formulaire va continuer sa soumission vers le contrôleur.
+            }
+        });
+    });
+</script>
+
 
 <!-- Modal Bootstrap -->
 <div class="modal fade" id="newCustomerModal" tabindex="-1" role="dialog" aria-labelledby="newCustomerModalLabel" aria-hidden="true">

@@ -110,16 +110,25 @@
         <h5 style="padding-top: 4px;" ><?= h($startupLoginName ?? '') ?></h5>
     </ul>
     <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
+        <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="/cashBoxes/index">
           <i class="far fa-bell"></i>
           <span class="badge badge-danger navbar-badge"><?= ($notifications) ?? 0 ?></span>
         </a>
-       
       </li>
     <li class="nav-item d-flex align-items-center">
         <span style="height: 25px; width: 2px; background-color: #ced4da; margin: 0 10px;"></span>
     </li>
+
+      <li class="nav-item">
+        <?php if ($userAuth->role != 'admin') : ?>
+                <a href="#" class="btn btn-outline-primary" style="border-radius: 50px; margin-top:7px" data-bs-toggle="modal" data-bs-target="#modalChangeStartup">
+                   <i class="nav-icon fas fa-home"></i>
+               </a>
+           <?php endif; ?>
+    </li>
+
+
     <li class="nav-item">
           <?php if ($userAuth->role == 'admin') : ?>
                 <a href="#" class="btn btn-outline-primary" style="border-radius: 50px; margin-top:7px" data-bs-toggle="modal" data-bs-target="#modalChangeAccount">
@@ -127,23 +136,18 @@
                 </a>
             <?php endif; ?>
     </li>
-    <li class="nav-item d-flex align-items-center">
-        <span style="height: 25px; width: 2px; background-color: #ced4da; margin: 0 10px;"></span>
-    </li>
-    <!-- <li class="nav-item d-flex align-items-center me-3">
+    <li class="nav-item d-flex align-items-center me-3">
         <span class="badge badge-warnin p-2" style="background-color: #2F4F4F;">
-            Il vous reste : <strong class="text-info">6789</strong> SMS
+            <strong class="text-info">
+                <?php echo $startup->sms_nbr ?>/1000</strong> SMS
         </span>
+    </li>
+    
+    <!-- <li class="nav-item d-flex align-items-center">
+        <span style="height: 25px; width: 2px; background-color: #ced4da; margin: 0 10px;"></span>
     </li> -->
-   
+
     <li class="nav-item">
-        <li class="nav-item">
-            <?= $this->Html->image($userAuth->profile ?? '', [
-                'class' => 'img-circle elevation-2',
-                'alt' => 'User Image',
-                'style' => 'height:35px;width:35px; color: #2F4F4F;'
-            ]) ?>
-        </li>
         <li class="nav-item text-dark" style="color: #2F4F4F; margin:10px;">
             <a href="#" class="d-block text-dar" style="color: #2F4F4F;"><?= h($userAuth->name ?? '') ?></a>
         </li>
@@ -202,7 +206,59 @@
 </div>
 
 
+<div class="modal fade" id="modalChangeStartup" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalAdd">Selectionner un centre</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="company-selector-container">
+          <?php 
+          if (!empty($startupFamily)): 
+          ?>
+             <?php foreach ($startupFamily as $compan): ?>
+            <?php
+       
+            // Build the URL for the link
+            $url = $this->Url->build([
+                'controller' => 'StartupFamily',
+                'action' => 'switch',
+                $compan->uuid
+            ]);
+            ?>
+            <a href="<?= $url ?>" 
+            class="company-item " 
+            data-uuid="<?= h($compan->uuid) ?>">
+                <?= $this->Html->image($compan->logo ?? '', [
+                    'class' => 'company-logo',
+                    'alt' => 'User Image',
+                    'style' => 'height:35px;width:35px; color: #2F4F4F;'
+                ]) ?>
+                <div class="company-info">
+                    <div class="company-name"><?= h($compan->name) ?></div>
+                </div>
+                <div class="status-dot"></div>
+            </a>
+        <?php endforeach; ?>
+          <?php else: ?>
+              <p>Aucune entreprise trouvée.</p>
+          <?php endif; ?>
+          
+          <a href="/startups/add" class="add-company-btn">
+              <span class="icon">+</span>
+              <span>Ajouter un établissement</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
+
     $(document).ready(function() {
     // 1. Listen for a click event on any company item
     $('.company-item').on('click', function(e) {
@@ -221,6 +277,50 @@
                 };
        $.ajax({
             url: '/updateloginStardtup',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function(result) {
+                if (result.code === 105) {
+                    toastr.success(result.msg);
+                    setTimeout(function() {
+                       window.location.reload();
+                    }, 1000);
+                } else {
+                    toastr.error(result.msg);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Gérer les erreurs de la requête AJAX
+                toastr.error("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+            },
+            complete: function() {
+                // Réactiver le bouton une fois la requête terminée (succès ou échec)
+                loginButton.prop('disabled', false).text('Se connecter');
+            }
+        });
+    });
+});
+
+  
+    $(document).ready(function() {
+    // 1. Listen for a click event on any company item
+    $('.company-item').on('click', function(e) {
+        // Prevents the browser from navigating to the URL of the link
+        e.preventDefault();
+        const companyUuid = $(this).data('uuid');
+      
+        if (!companyUuid) {
+            console.error("UUID not found for this item.");
+            return;
+        }
+        $('#modalChangeAccount').modal('hide');
+        var data = {
+                    'uuid':companyUuid,
+                    '_csrfToken': myToken
+                };
+       $.ajax({
+            url: '/updateloginStardtup2',
             type: 'POST',
             data: data,
             dataType: 'json',

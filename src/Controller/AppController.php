@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @since     0.2.9
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace App\Controller;
 
 use Cake\Controller\Controller;
@@ -26,6 +27,7 @@ use Cake\Controller\Controller;
  *
  * @link https://book.cakephp.org/5/en/controllers.html#the-app-controller
  */
+
 class AppController extends Controller
 {
     public $currentUser = null;
@@ -55,6 +57,7 @@ class AppController extends Controller
         $this->currentUser = $this->Authentication->getResult()->getData();
         $user = $this->currentUser;
         $logUserId = 0;
+        $startup_id = 0;
 
         if ($user) {
         $accountTable = $this->fetchTable('Accounts');
@@ -65,11 +68,22 @@ class AppController extends Controller
             $startup_id = $adminLogin->startup_id;
             $logUserId = $adminLogin->id ?? 0;
             $logUser = $adminTable->findById($logUserId)->first() ?? 0;
+            $startup = $this->fetchTable('Startups')->findById($startup_id)->first();
+
         }else {
             $accountLogin = $accountTable->findById($user->id)->first();
             $startup_id = $accountLogin->startup_id;
             $logUserId = $accountLogin->id ?? 0;
             $logUser = $accountTable->findById($logUserId)->first() ?? 0;
+
+
+            $loginStartup = $startupTable->findById($startup_id)->first();
+            // debug($startup_id);
+            // die();
+            //   Recuperer tous les centres d'une entreprise
+            $startupFamily = $this->fetchTable('Startups')->find()->where(['matricule'=>$loginStartup->matricule])->toArray();
+            // debug($startupFamily);
+            // die();
         }
         // $logUser = 1;
         $loginStartup = $startupTable->findById($startup_id)->first();
@@ -80,13 +94,14 @@ class AppController extends Controller
         $startupLogo = 'hhd';
         $startupLoginName = '';
         }
+        $startup = $this->fetchTable('Startups')->findById($startup_id)->first();
         // $logUserId = 0;
         // debug($logUserId);die();
         $cashbox = $this->fetchTable('CashBoxes')->find()->where(['responsable_id'=>$logUserId])->first() ?? '';
         $notifications =  $cashbox->notification ?? '';
         // debug($notifications);die();
         $userAuth = $this->request->getAttribute('authentication')->getResult()->getData();
-        $this->set(compact('userAuth','companies','startupLogo','startupLoginName','notifications'));
+        $this->set(compact('startup','userAuth','companies','startupLogo','startupLoginName','notifications'));
     }
 
 

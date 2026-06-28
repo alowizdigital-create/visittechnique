@@ -266,26 +266,14 @@
 
                 <!-- Ajout d'un ID au bouton pour le cibler en JavaScript -->
                 <button type="submit" id="loginButton" class="login-button">Se connecter</button>
+                
                 <a href="#" class="forgot-password-link">Mot de passe oublié ?</a>
                  <a href="/admin/login" class="forgot-password-link" >
                     <i class="nav-icon fas fa-sign-in-alt"></i>
                  </a>
             </form>
 
-            <!-- <div class="new-user-section">
-                <a href="/admin/login" class="pre-register-card">
-                    <div class="card-icon-wrapper">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <div class="card-text">
-                        <h3>Administrateur ?</h3>
-                        <p>Connectez vous ici</p>
-                    </div>
-                    <div class="card-arrow">
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                </a>
-            </div> -->
+           
         </div>
     </main>
 </body>

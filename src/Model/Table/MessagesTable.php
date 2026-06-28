@@ -56,6 +56,11 @@ class MessagesTable extends Table
             'foreignKey' => 'customer_id',
             'joinType' => 'INNER',
         ]);
+
+        $this->belongsTo('Contacts', [
+            'foreignKey' => 'contact_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**
@@ -66,11 +71,11 @@ class MessagesTable extends Table
      */
     public function validationDefault(Validator $validator): Validator
     {
-        $validator
-            ->scalar('sender_name')
-            ->maxLength('sender_name', 11)
-            ->requirePresence('sender_name', 'create')
-            ->notEmptyString('sender_name');
+        // $validator
+        //     ->scalar('sender_name')
+        //     ->maxLength('sender_name', 11)
+        //     ->requirePresence('sender_name', 'create')
+        //     ->notEmptyString('sender_name');
 
         $validator
             ->scalar('receiver')
@@ -83,15 +88,15 @@ class MessagesTable extends Table
             ->requirePresence('content', 'create')
             ->notEmptyString('content');
 
-        $validator
-            ->integer('create_uid')
-            ->requirePresence('create_uid', 'create')
-            ->notEmptyString('create_uid');
+        // $validator
+        //     ->integer('create_uid')
+        //     ->requirePresence('create_uid', 'create')
+        //     ->notEmptyString('create_uid');
 
-        $validator
-            ->integer('write_uid')
-            ->requirePresence('write_uid', 'create')
-            ->notEmptyString('write_uid');
+        // $validator
+        //     ->integer('write_uid')
+        //     ->requirePresence('write_uid', 'create')
+        //     ->notEmptyString('write_uid');
 
         $validator
             ->scalar('uuid')
@@ -110,33 +115,33 @@ class MessagesTable extends Table
             ->requirePresence('sent_date', 'create')
             ->notEmptyDateTime('sent_date');
 
-        $validator
-            ->integer('response_code')
-            ->requirePresence('response_code', 'create')
-            ->notEmptyString('response_code');
+        // $validator
+        //     ->integer('response_code')
+        //     ->requirePresence('response_code', 'create')
+        //     ->notEmptyString('response_code');
 
-        $validator
-            ->scalar('response_body')
-            ->requirePresence('response_body', 'create')
-            ->notEmptyString('response_body');
+        // $validator
+        //     ->scalar('response_body')
+        //     ->requirePresence('response_body', 'create')
+        //     ->notEmptyString('response_body');
 
-        $validator
-            ->integer('parts')
-            ->requirePresence('parts', 'create')
-            ->notEmptyString('parts');
+        // $validator
+        //     ->integer('parts')
+        //     ->requirePresence('parts', 'create')
+        //     ->notEmptyString('parts');
 
-        $validator
-            ->integer('inspection_id')
-            ->notEmptyString('inspection_id');
+        // $validator
+        //     ->integer('inspection_id')
+        //     ->notEmptyString('inspection_id');
 
-        $validator
-            ->integer('customer_id')
-            ->notEmptyString('customer_id');
+        // $validator
+        //     ->integer('customer_id')
+        //     ->notEmptyString('customer_id');
 
-        $validator
-            ->scalar('direction')
-            ->maxLength('direction', 3)
-            ->notEmptyString('direction');
+        // $validator
+        //     ->scalar('direction')
+        //     ->maxLength('direction', 3)
+        //     ->notEmptyString('direction');
 
         return $validator;
     }
@@ -152,7 +157,7 @@ class MessagesTable extends Table
     {
         $rules->add($rules->existsIn(['inspection_id'], 'Inspections'), ['errorField' => 'inspection_id']);
         $rules->add($rules->existsIn(['customer_id'], 'Customers'), ['errorField' => 'customer_id']);
-
+        $rules->add($rules->existsIn(['contact_id'], 'Contacts'), ['errorField' => 'contact_id']);
         return $rules;
     }
 }
