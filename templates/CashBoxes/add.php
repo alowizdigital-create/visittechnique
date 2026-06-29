@@ -20,6 +20,7 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('solde_initial');
                     echo $this->Form->control('responsable_id',['options'=> $responsables]);
+                 
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>
