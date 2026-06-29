@@ -32,7 +32,8 @@ class RemindersController extends AppController
             $acountLoginId = $accountLogin->id;
             $startup_id = $accountLogin->startup_id;
         }
-        $query = $this->Reminders->find()
+
+        $query = $this->Reminders->find()->where(['Reminders.startup_id'=>$startup_id])
             ->contain(['Genders', 'Templates']);
         $reminders = $this->paginate($query);
         $this->set(compact('reminders'));
@@ -56,7 +57,7 @@ class RemindersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+   public function add()
     {
         $user = $this->currentUser;
         $accountTable = $this->fetchTable('Accounts');
@@ -104,6 +105,7 @@ class RemindersController extends AppController
         $templates = $this->Reminders->Templates->find('list', limit: 200)->where(['startup_id'=> $startup_id])->all();
         $this->set(compact('reminder', 'genders', 'templates'));
     }
+
 
     /**
      * Edit method
