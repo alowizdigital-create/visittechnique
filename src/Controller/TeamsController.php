@@ -330,11 +330,26 @@ public function sendGroMessage($uuid)
      */
       public function add()
      {
+         
+          $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
         $team = $this->Teams->newEmptyEntity();
         if ($this->request->is('post')) {
             $team = $this->Teams->patchEntity($team, $this->request->getData());
             $team->create_uid = $this->currentUser->id;
             $team->write_uid =  $this->currentUser->id;
+             $team->startup_id = $startup_id;
             $team->uuid = Text::uuid();
             // $this->create(60);
             // debug($team);die();
