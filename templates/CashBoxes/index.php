@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -362,6 +363,7 @@
             font-size: 1.125rem;
             font-weight: 700;
         }
+        
         .modal-close-btn {
             background: none;
             border: none;
@@ -378,16 +380,11 @@
             margin-top: var(--spacing-lg);
             gap: var(--spacing-sm);
         }
-
     </style>
 
 </head>
 
 <body>
-    <!-- === PRELOADER === -->
-<!-- <div id="preloader">
-    <div class="spinner"></div>
-</div> -->
 
     <div id="custom-alert" class="modal-backdrop" onclick="this.classList.remove('active')">
         <div class="modal-content" style="max-width: 400px;" onclick="event.stopPropagation()">
@@ -410,15 +407,15 @@
         <div class="stats-grid">
             <div class="stat-card stat-input">
                 <p>Entrée(s)</p>
-                <p id="stat-input"><?= $this->Number->format($amountInput) ?? 0 ?></p>
+                <p id="stat-input"><?= $this->Number->format($amountInput) ?? 0 ?> Fcfa</p>
             </div>
             <div class="stat-card stat-output">
                 <p>Sortie(s)</p>
-                <p id="stat-output"><?= $this->Number->format($amountInout) ?? 0 ?></p>
+                <p id="stat-output"><?= $this->Number->format($amountInout) ?? 0 ?> Fcfa</p>
             </div>
             <div class="stat-card stat-current">
                 <p>Solde actuel</p>
-                <p id="stat-current"><?= $this->Number->format($amountActuel) ?? 0 ?></p>
+                <p id="stat-current"><?= $this->Number->format($amountActuel) ?? 0 ?>Fcfa</p>
             </div>
         </div>
 
@@ -430,7 +427,6 @@
                 <?php if ($userData->role == 'admin' || $userData->role == 'directeur'): ?>
                           <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#newcahbox" > <?= __('Nouvelle caisse') ?><i data-lucide="plus"></i></a>
                 <?php endif; ?>
-                <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#outcash" > <?= __('Decaissement') ?></a>
             </div>
 
             <div class="table-container" id="cashbox-table-container">
@@ -447,9 +443,10 @@
                     <tbody id="cashbox-list-body">
                         <?php $count = 1; foreach ($cashBoxes as $cashBox): ?>
                             <tr>
-                                <td><?= $cashBox->notification ?></td>
+                                <td><?= $count ?></td>
+                                   <!--<td><?= $cashBox->create_uid ?></td>-->
                                 <td><?= h($cashBox->name) ?></td>
-                                <td><?= $this->Number->format($cashBox->solde_actuel) ?></td>
+                                <td><?= h($cashBox->solde_actuel) ?></td>
                                 <td>
                                     <span class="status-<?= h($cashBox->statut) ?>">
                                         <?= h($cashBox->statut) ?>
@@ -460,10 +457,20 @@
                                         <i data-lucide="arrow-right"></i> Transferer
                                     </button> -->
                           <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>" data-uuid="<?= $cashBox->uuid ?>"  class="transfer-btn btn-small"  data-bs-toggle="modal" data-bs-target="#modalRelance" > <?= __('Transferer') ?></a>
+                          
+                            <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#outcash" > <?= __('Decaissement') ?>
+                              </a>
+
+                                    <!--<?php if ($cashBox->statut !== 'close') : ?>-->
+                                    <!--    <?= $this->Html->link(__('Ouvrir'), ['action' => 'transactions', $cashBox->uuid], ['class' => 'open-btn btn-small']) ?>-->
+                                    <!--    <?= $this->Html->link(__('Fermer'), ['action' => 'close', $cashBox->uuid], ['class' => 'close-btn btn-small']) ?>-->
+                                    <!--<?php endif; ?>-->
                                 </td>
                             </tr>
                         <?php $count++; endforeach; ?>
                     </tbody>
+                    
+                   
                 </table>
             </div>
         </div>
@@ -474,23 +481,24 @@
                     <i data-lucide="trending-up"></i> Les opérations de la caisse
                 </h2>
             </div>
+
             <?= $this->Form->create(null, ['type' => 'get', 'id' => 'filter-form', 'class' => 'filter-form']) ?>
                 <div class="form-group form-group-flex">
-                    <label for="search">Type d'opération </label>
-                  <?= $this->Form->control('search', [
-                        'label' => false,
-                        'class' => 'form-control',
-                        'options' => [
-                            '' => '▼ Toutes les operations ',
-                            'entrée' => 'Encaissements',
-                            'Decaissement' => 'Sorties de fonds',
-                            'Transfert' => 'Transferts de fonds'
-                        ],
-                        'placeholder' => 'Mot-clé',
-                        'value' => $search ?? ''
-                    ]) ?>
+                    <label for="search">Types d'operations</label>
+                      <?= $this->Form->control('search', [
+                            'label' => false,
+                            'class' => 'form-control',
+                            'options' => [
+                                '' => '▼ Toutes les operations',
+                                'entrée' => 'Encaissements',
+                                'Decaissement' => 'Sorties de fonds',
+                                'Transfert' => 'Transferts de fonds'
+                            ],
+                            'placeholder' => 'Mot-clé',
+                            'value' => $search ?? ''
+                        ]) ?>
                 </div>
-                <div class="form-group form-group-flex">
+                 <div class="form-group form-group-flex">
                     <label for="search">Mot-clé </label>
                   <?= $this->Form->control('search2', [
                         'label' => false,
@@ -499,6 +507,7 @@
                         'value' => $search2 ?? ''
                     ]) ?>
                 </div>
+
                 <div class="form-group">
                     <label for="from">Date de début</label>
                     <?= $this->Form->control('from', [
@@ -518,20 +527,20 @@
                         'value' => $to ?? ''
                     ]) ?>
                 </div>
+
                 <button type="submit" class="btn btn-primary btn-icon-sm">
                     <i data-lucide="search"></i> Rechercher
                 </button>
             <?= $this->Form->end() ?>
+
 
             <div class="table-container" id="operations-table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th><?= $this->Paginator->sort('type', 'Type') ?></th>
-                            <th><?= $this->Paginator->sort('cash_box_id', 'Caisse') ?></th>
-                            <th><?= $this->Paginator->sort('user_id', 'Utilisateur') ?></th>
-                            <th><?= $this->Paginator->sort('register', 'Immatriculation') ?></th>
-                            <th><?= $this->Paginator->sort('customer', 'Téléphone') ?></th>
+                              <th><?= $this->Paginator->sort('user_id', 'Emeteur') ?></th>
+                            <th><?= $this->Paginator->sort('cash_box_id', 'Recepteur') ?></th>
                             <th><?= $this->Paginator->sort('montant', 'Montant') ?></th>
                             <th><?= $this->Paginator->sort('created', 'Date') ?></th>
                             <th>Consulter</th>
@@ -545,33 +554,36 @@
                                         <?= h($cashMovement->type) ?>
                                     </span>
                                 </td>
+                                  <td><?= $cashMovement->account->username ?? '' ?></td>
                                 <td><?= $cashMovement->cash_box->name ?? '' ?></td>
-                                <td><?= $cashMovement->account->username ?? '' ?></td>
-                                <td><?= $cashMovement->inspection->vehicle->registration_number ?? '' ?></td>
-                                <td><?= $cashMovement->inspection->vehicle->customer->phone ?? '' ?></td>
                                 <td><?= $this->Number->format($cashMovement->montant) ?></td>
                                 <td><?= $cashMovement->created?->i18nFormat('dd/MM/yyyy HH:mm') ?></td>
                                 <td class="actions-cell">
                                     <a href="<?= $this->Url->Build(['controller'=>'CashMovements','action'=>'view', $cashMovement->uuid]) ?>" class="view-btn btn-small" >
                                         <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
                                     </a>
+                                
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
-                    <tfoot>
-                        <tr>
-                        </tr>
+                      <tfoot>
+                        <!--<tr>-->
+                        <!--    <th colspan="7" style="text-align:right; font-size: 1.875rem;">Total : <?= number_format($totalAmount, 0, ',', ' ') ?> FCFA</th>-->
+                        <!--</tr>-->
                     </tfoot>
                 </table>
             </div>
+
             <div style="margin-top: var(--spacing-md); font-size: 0.875rem; color: var(--color-text-light); text-align: center;">
                 <div>Page 1 sur 10</div>
             </div>
+
         </div>
 
     </div>
 
+    
 <div class="modal fade" id="newcahbox" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -637,7 +649,7 @@
               <?= $this->Form->control('nam', [
                 'label' => 'Montant :',
                 'class' => 'form-control',
-                'type'=>'number',
+                 'type'=>'number',
                 'placeholder' => 'EX: 5000',
                 'id' => 'nam',
               ]) ?>
@@ -646,7 +658,7 @@
            <div class="row mt-2">
             <div class="col-12">
               <?= $this->Form->control('responsabl', [
-                'label' => 'Recepteur :',
+                'label' => 'Justificatif :',
                 'type' => 'textarea',
                 'class' => 'form-control',
                 'placeholder' => 'EX : Achat huile moteur ',
@@ -719,7 +731,7 @@
         </fieldset>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-          <?= $this->Form->button(__('Transfere'), ['class' => 'btn btn-primary']) ?>
+          <?= $this->Form->button(__('Transferer'), ['class' => 'btn btn-primary']) ?>
         </div>
         <?= $this->Form->end() ?>
       </div>
@@ -729,6 +741,7 @@
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <script>
         // Initialise les icônes Lucide après le chargement du DOM
@@ -804,21 +817,61 @@
                 toastr.error(result.msg || 'Échec du paiement');
             }
         },
-            error: function(xhr, status, error) {
-                toastr.error('Erreur lors de la confirmation du paiement');
-            }
-        });
+        error: function(xhr, status, error) {
+            toastr.error('Erreur lors de la confirmation du paiement');
+        }
     });
+});
 
-    $('#newCashboxes').submit(function(e) {
-        e.preventDefault();
+       
+    </script>
     
+
+<script>
+        // Écouteur d'événement pour le clic sur les liens "Transférer"
+        $(document).on('click', '[data-bs-target="#modalRelance"]', function() {
+            const cashboxUuid = $(this).data('uuid');
+            $('#cashbox_uuid').val(cashboxUuid);
+        });
+    
+        // Gestionnaire de soumission du formulaire
+        $('#newRelance').submit(function(e) {
+            e.preventDefault();
+            // Récupération des valeurs du formulaire
+            let cashbox_uuid = $('#cashbox_uuid').val();
+            let amount = $('#amount').val();
+            let commit = $('#commentaire').val();
+            let receiver_name = $('#receiver option:selected').text(); // Récupère le nom de l'utilisateur
+            // Construction du message de confirmation dynamique
+            let title = "<?= __('Vous allez effectuer un transfert de {0} Fcfa vers la caisse de {1}') ?>";
+            title = title.replace('{0}', amount);
+            title = title.replace('{1}', receiver_name);
+    
+            let dest_url = "<?= $this->Url->build(['action' => 'shareCashBox']) ?>";
+            dest_url = dest_url.replace(/&amp;/g, '&');
+            
+            let data = {
+                cashbox_uuid: cashbox_uuid,
+                amount: amount,
+                commit: commit,
+                receiver: $('#receiver').val(), // Passe l'ID de l'utilisateur
+            };
+            console.log(data);
+            let message = $(this).attr('data-message');
+            let icon = 'warning';
+            
+            confirmAction(title, message, icon, dest_url, data, 'reload');
+        });
+    
+        $('#newCashboxes').submit(function(e) {
+        e.preventDefault();
+       
         const data = {
             name: $('#name').val(),
             responsable: $('#responsable').val(),
             _csrfToken: myToken
         };
-    
+       
         $.ajax({
             url: '/rootNewCashbox',
             type: 'POST',
@@ -840,47 +893,9 @@
             }
         });
     });
-</script>
 
+ // Gestion de decaissement
     
-
-<script>
-    // Écouteur d'événement pour le clic sur les liens "Transférer"
-    $(document).on('click', '[data-bs-target="#modalRelance"]', function() {
-        const cashboxUuid = $(this).data('uuid');
-        $('#cashbox_uuid').val(cashboxUuid);
-    });
-
-    // Gestionnaire de soumission du formulaire
-    $('#newRelance').submit(function(e) {
-        e.preventDefault();
-        // Récupération des valeurs du formulaire
-        let cashbox_uuid = $('#cashbox_uuid').val();
-        let amount = $('#amount').val();
-        let commit = $('#commentaire').val();
-        let receiver_name = $('#receiver option:selected').text(); // Récupère le nom de l'utilisateur
-        // Construction du message de confirmation dynamique
-        let title = "<?= __('Vous allez effectuer un transfert de {0} Fcfa vers la caisse de {1}') ?>";
-        title = title.replace('{0}', amount);
-        title = title.replace('{1}', receiver_name);
-
-        let dest_url = "<?= $this->Url->build(['action' => 'shareCashBox']) ?>";
-        dest_url = dest_url.replace(/&amp;/g, '&');
-        
-        let data = {
-            cashbox_uuid: cashbox_uuid,
-            amount: amount,
-            commit: commit,
-            receiver: $('#receiver').val(), // Passe l'ID de l'utilisateur
-        };
-        console.log(data);
-        let message = $(this).attr('data-message');
-        let icon = 'warning';
-        
-        confirmAction(title, message, icon, dest_url, data, 'reload');
-    });
-
-
     $('#outcashTransaction').submit(function(e) {
     e.preventDefault();
  
@@ -889,7 +904,7 @@
         responsable: $('#responsabl').val(),
         _csrfToken: myToken
     };
-   alert('ddd');
+   
     $.ajax({
         url: '/rootOutTransaction',
         type: 'POST',
@@ -906,27 +921,16 @@
             }
         },
         error: function(xhr, status, error) {
-            toastr.error('Erreur lors de decaissement');
+            toastr.error('Erreur lors du decaissement');
         }
         });
     });
+    
 </script>
 
-<!-- <script>
-    // Attendre que la page soit complètement chargée
-    window.addEventListener("load", function() {
-        const loader = document.getElementById("preloader");
-        loader.classList.add("hidden");
 
-        // Optionnel : supprimer complètement le div du DOM après animation
-        setTimeout(() => loader.remove(), 500);
-    });
-</script> -->
 
 
 </body>
 </html>
 
-
-
-  
