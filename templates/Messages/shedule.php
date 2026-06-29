@@ -490,13 +490,11 @@ $('#outcashTransaction').submit(function(e) {
     
     // Créer une chaîne de numéros propre séparée par des virgules pour l'envoi
     const cleanNumbersString = numbersArray.join(',');
-    // alert(directMsgCountSpan);
 
     const data = {
         // Envoi de la chaîne de numéros nettoyée
         numero: cleanNumbersString, 
         message: $('#message').val(),
-        // countMessage: directMsgCountSpan,
         _csrfToken: $('input[name="_csrfToken"]').val()
     };
     
