@@ -8,7 +8,7 @@
     padding: 10px;
 }
 
-.company-item {
+.company-item  {
     display: flex;
     align-items: center;
     padding: 12px 10px;
@@ -19,7 +19,22 @@
     color: inherit; /* Utilise la couleur du texte par défaut */
 }
 
+.company-item2  {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    text-decoration: none; /* Enlève le soulignement du lien */
+    color: inherit; /* Utilise la couleur du texte par défaut */
+} 
+
 .company-item:hover {
+    background-color: #f4f6f8;
+    transform: translateY(-2px); /* Crée un léger effet de "décollement" */
+}
+.company-item2:hover {
     background-color: #f4f6f8;
     transform: translateY(-2px); /* Crée un léger effet de "décollement" */
 }
@@ -27,6 +42,10 @@
 .company-item.active {
     background-color: #e6f3ff; /* Un fond plus doux pour l'élément actif */
 }
+.company-item2.active {
+    background-color: #e6f3ff; /* Un fond plus doux pour l'élément actif */
+}
+
 
 .company-item.active .status-dot {
     background-color: #28a745; /* Vert pour l'entreprise active */
@@ -97,63 +116,69 @@
 
 <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1030; background-color: #FFF;">
     <ul class="navbar-nav">
+        
+        
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-         <li class="nav-item" style="margin-left: 10px; margin-right:  10px;">
+          <li class="nav-item" style="margin-left: 10px; margin-right:  10px;">
             <?= $this->Html->image($startupLogo ?? '', [
                 'class' => 'img-circle elevation-2',
                 'alt' => 'User Image',
                 'style' => 'height:35px;width:35px; color: #2F4F4F;'
             ]) ?>
         </li>
-        <h5 style="padding-top: 4px;" ><?= h($startupLoginName ?? '') ?></h5>
+        <h6 style="padding-top: 4px;" ><?= h($startupLoginName ?? '') ?></h6>
+        
+        
     </ul>
     <ul class="navbar-nav ml-auto">
-        <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="/cashBoxes/index">
+    <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="/cashboxes/report">
           <i class="far fa-bell"></i>
           <span class="badge badge-danger navbar-badge"><?= ($notifications) ?? 0 ?></span>
         </a>
       </li>
-    <li class="nav-item d-flex align-items-center">
-        <span style="height: 25px; width: 2px; background-color: #ced4da; margin: 0 10px;"></span>
-    </li>
-
-      <li class="nav-item">
-        <?php if ($userAuth->role != 'admin') : ?>
-                <a href="#" class="btn btn-outline-primary" style="border-radius: 50px; margin-top:7px" data-bs-toggle="modal" data-bs-target="#modalChangeStartup">
-                   <i class="nav-icon fas fa-home"></i>
-               </a>
-           <?php endif; ?>
-    </li>
-
-
     <li class="nav-item">
-          <?php if ($userAuth->role == 'admin') : ?>
+         <?php if ($userAuth->role == 'admin') : ?>
                 <a href="#" class="btn btn-outline-primary" style="border-radius: 50px; margin-top:7px" data-bs-toggle="modal" data-bs-target="#modalChangeAccount">
                     <i class="nav-icon fas fa-home"></i>
                 </a>
             <?php endif; ?>
     </li>
+    
+  <li class="nav-item">
+    <?php if ($userAuth->role == 'directeur') : ?>
+        <a href="#" class="btn btn-outline-primary" 
+           style="border-radius: 50px; margin-top:7px" 
+           data-bs-toggle="modal" 
+           data-bs-target="#modalChangeCenter">
+            <i class="nav-icon fas fa-exchange-alt"></i>
+        </a>
+    <?php endif; ?>
+</li>
+  
+    <li class="nav-item d-flex align-items-center">
+        <span style="height: 25px; width: 2px; background-color: #ced4da; margin: 0 10px;"></span>
+    </li>
     <li class="nav-item d-flex align-items-center me-3">
         <span class="badge badge-warnin p-2" style="background-color: #2F4F4F;">
-            <strong class="text-info">
-                <?php echo $startup->sms_nbr ?>/1000</strong> SMS
+            <strong class="text-info"><?php echo $startup->sms_nbr ?></strong>
+           SMS
         </span>
     </li>
-    
-    <!-- <li class="nav-item d-flex align-items-center">
+    <li class="nav-item d-flex align-items-center">
         <span style="height: 25px; width: 2px; background-color: #ced4da; margin: 0 10px;"></span>
-    </li> -->
-
-    <li class="nav-item">
-        <li class="nav-item text-dark" style="color: #2F4F4F; margin:10px;">
-            <a href="#" class="d-block text-dar" style="color: #2F4F4F;"><?= h($userAuth->name ?? '') ?></a>
-        </li>
     </li>
+         <li class="nav-item">
+        <!--<li class="nav-item text-dark" style="color: #2F4F4F; margin:10px;">-->
+        <!--    <a href="#" class="d-block text-dar" style="color: #2F4F4F;"><?= h($userAuth->name ?? '') ?></a>-->
+        <!--</li>-->
+    </li>
+       
 </ul>
 </nav>
+
 
 <div class="modal fade" id="modalChangeAccount" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
   <div class="modal-dialog">
@@ -178,7 +203,7 @@
             ]);
             ?>
             <a href="<?= $url ?>" 
-            class="company-item "
+            class="company-item " 
             data-uuid="<?= h($company->uuid) ?>">
                 <?= $this->Html->image($company->logo ?? '', [
                     'class' => 'company-logo',
@@ -205,8 +230,9 @@
   </div>
 </div>
 
+<!--Modal changement de  Centre -->
 
-<div class="modal fade" id="modalChangeStartup" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
+<div class="modal fade" id="modalChangeCenter" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -222,14 +248,14 @@
             <?php
        
             // Build the URL for the link
-            $url = $this->Url->build([
-                'controller' => 'StartupFamily',
-                'action' => 'switch',
-                $compan->uuid
-            ]);
+            // $url = $this->Url->build([
+            //     'controller' => 'StartupFamily',
+            //     'action' => 'switch',
+            //     $compan->uuid
+            // ]);
             ?>
             <a href="<?= $url ?>" 
-            class="company-item " 
+            class="company-item2" 
             data-uuid="<?= h($compan->uuid) ?>">
                 <?= $this->Html->image($compan->logo ?? '', [
                     'class' => 'company-logo',
@@ -245,11 +271,6 @@
           <?php else: ?>
               <p>Aucune entreprise trouvée.</p>
           <?php endif; ?>
-          
-          <a href="/startups/add" class="add-company-btn">
-              <span class="icon">+</span>
-              <span>Ajouter un établissement</span>
-          </a>
         </div>
       </div>
     </div>
@@ -257,8 +278,8 @@
 </div>
 
 
-<script>
 
+<script>
     $(document).ready(function() {
     // 1. Listen for a click event on any company item
     $('.company-item').on('click', function(e) {
@@ -292,7 +313,7 @@
             },
             error: function(xhr, status, error) {
                 // Gérer les erreurs de la requête AJAX
-                toastr.error("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+                toastr.error("Une erreur s'est produite lors de la connexion 1. Veuillez réessayer.");
             },
             complete: function() {
                 // Réactiver le bouton une fois la requête terminée (succès ou échec)
@@ -302,25 +323,28 @@
     });
 });
 
-  
-    $(document).ready(function() {
+
+
+// Mutation de centre
+
+  $(document).ready(function() {
     // 1. Listen for a click event on any company item
-    $('.company-item').on('click', function(e) {
+    $('.company-item2').on('click', function(e) {
         // Prevents the browser from navigating to the URL of the link
         e.preventDefault();
-        const companyUuid = $(this).data('uuid');
+        const centerUuid = $(this).data('uuid');
       
-        if (!companyUuid) {
+        if (!centerUuid) {
             console.error("UUID not found for this item.");
             return;
         }
-        $('#modalChangeAccount').modal('hide');
+        $('#modalChangeCenter').modal('hide');
         var data = {
-                    'uuid':companyUuid,
+                    'uuid':centerUuid,
                     '_csrfToken': myToken
                 };
        $.ajax({
-            url: '/updateloginStardtup2',
+            url: '/updateloginCenter',
             type: 'POST',
             data: data,
             dataType: 'json',
@@ -331,13 +355,13 @@
                        window.location.reload();
                     }, 1000);
                 } else {
-                    toastr.error(result.msg);
+                    toastr.error(result.mg);
                 }
             },
-            error: function(xhr, status, error) {
-                // Gérer les erreurs de la requête AJAX
-                toastr.error("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
-            },
+            // error: function(xhr, status, error) {
+            //     // Gérer les erreurs de la requête AJAX
+            //     toastr.error("Une erreur s'est produite lors de la connexion. Veuillez réessayer.");
+            // },
             complete: function() {
                 // Réactiver le bouton une fois la requête terminée (succès ou échec)
                 loginButton.prop('disabled', false).text('Se connecter');
@@ -346,3 +370,4 @@
     });
 });
 </script>
+
