@@ -9,6 +9,13 @@
                             <!-- En-tête -->
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h3 class="card-title"> <i class="nav-icon fas fa-list" style="margin: 10px;"></i> <?= __('Liste des entreprises') ?></h3>
+                                 <div class="ml-auto">
+                                    <?= $this->Html->link(__('Créer une entreprise enfant'), ['action' => 'child'], [
+                                        'class' => 'btn btn-primary text-white',
+                                        'id' => 'newCollabot',
+                                        'style' => 'border:none;',
+                                    ]) ?>
+                                </div>
                                 <div class="ml-auto">
                                     <?= $this->Html->link(__('Nouvelle'), ['action' => 'add'], [
                                         'class' => 'btn btn-primary text-white',
