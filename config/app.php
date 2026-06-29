@@ -264,26 +264,39 @@ return [
      *   E.g set it to 'utf8mb4' in MariaDB and MySQL and 'utf8' for any
      *   other RDBMS.
      */
-   'default' => [
-    'className' => Connection::class,
-    'driver' => Mysql::class,
 
-    'host' => env('DB_HOST', 'localhost'),
-    'port' => env('DB_PORT', 3306),
-    'username' => env('DB_USERNAME', 'visituser'),
-    'password' => env('DB_PASSWORD', 'Jeanpierre236#'),
-    'database' => env('DB_DATABASE', 'visittechnique'),
 
-    'persistent' => false,
-    'timezone' => 'UTC',
-    'encoding' => 'utf8mb4',
-    'flags' => [],
-    'cacheMetadata' => true,
-    'log' => false,
-    'quoteIdentifiers' => false,
-
-    'url' => env('DATABASE_URL', null),
-],
+        'Datasources' => [
+                /*
+                 * These configurations should contain permanent settings used
+                 * by all environments.
+                 *
+                 * The values in app_local.php will override any values set here
+                 * and should be used for local and per-environment configurations.
+                 *
+                 * Environment variable-based configurations can be loaded here or
+                 * in app_local.php depending on the application's needs.
+                 */
+           'default' => [
+            'className' => Connection::class,
+            'driver' => Mysql::class,
+        
+            'host' => env('DB_HOST', 'localhost'),
+            'port' => env('DB_PORT', 3306),
+            'username' => env('DB_USERNAME', 'visituser'),
+            'password' => env('DB_PASSWORD', 'Jeanpierre236#'),
+            'database' => env('DB_DATABASE', 'visittechnique'),
+        
+            'persistent' => false,
+            'timezone' => 'UTC',
+            'encoding' => 'utf8mb4',
+            'flags' => [],
+            'cacheMetadata' => true,
+            'log' => false,
+            'quoteIdentifiers' => false,
+        
+            'url' => env('DATABASE_URL', null),
+        ],
 
         /*
          * The test connection is used during the test suite.
