@@ -1,4 +1,4 @@
-        <body class="hold-transition sidebar-mini" style="padding-top: 25px;">
+   <body class="hold-transition sidebar-mini" style="padding-top: 25px;">
     <section class="content">
       <div class="container-fluid">
         <div class="row">
