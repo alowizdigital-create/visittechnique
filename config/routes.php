@@ -31,31 +31,40 @@ use PHPUnit\TextUI\CliArguments\Builder;
  * if required.
  */
 return function (RouteBuilder $routes): void {
-   
+    /*
+     * The default class to use for all routes
+     *
+     * The following route classes are supplied with CakePHP and are appropriate
+     * to set as the default:
+     *
+     * - Route
+     * - InflectedRoute
+     * - DashedRoute
+     *
+     * If no call is made to `Router::defaultRouteClass()`, the class used is
+     * `Route` (`Cake\Routing\Route\Route`)
+     *
+     * Note that `Route` does not do any inflections on URLs which will result in
+     * inconsistently cased URLs when used with `{plugin}`, `{controller}` and
+     * `{action}` markers.
+     */
     $routes->setRouteClass(DashedRoute::class);
 
     $routes->prefix('Admin', function (RouteBuilder $builder): void {
         $builder->connect('/login', ['controller' => 'Admins', 'action' => 'login']);
-        $builder->connect('/add', ['controller' => 'Admins', 'action' => 'add']);
         $builder->connect('/logout', ['controller' => 'Admins', 'action' => 'logout']);
         $builder->connect('/admins/logout', ['controller' => 'admins', 'action' => 'logout']);
         $builder->fallbacks(DashedRoute::class);
     });
     
-    $routes->prefix('Account', function (RouteBuilder $builder): void {
-        $builder->connect('/', ['controller' => 'Accounts', 'action' => 'login']);
+      $routes->prefix('Account', function (RouteBuilder $builder): void {
         $builder->connect('/login', ['controller' => 'Accounts', 'action' => 'login']);
-        $builder->connect('/add', ['controller' => 'Accounts', 'action' => 'add']);
-        $builder->connect('/collabots', ['controller' => 'Accounts', 'action' => 'collabots']);
         $builder->connect('/logout', ['controller' => 'Accounts', 'action' => 'logout']);
+         $builder->connect('/add', ['controller' => 'Accounts', 'action' => 'add']);
+        $builder->connect('/collabots', ['controller' => 'Accounts', 'action' => 'collabots']);
         // $builder->connect('/admins/dashboard', ['controller' => 'Users', 'action' => 'dashboard']);
         $builder->fallbacks(DashedRoute::class);
     });
-
-    //   $routes->scope('/account', function (RouteBuilder $builder): void {
-    //     $builder->connect('/', ['controller' => 'Accounts', 'action' => 'login']);
-    //       $builder->fallbacks();
-    // });
 
     $routes->scope('/', function (RouteBuilder $builder): void {
         /*
@@ -64,39 +73,40 @@ return function (RouteBuilder $routes): void {
          * to use (in this case, templates/Pages/home.php)...
          */
         //  $builder->connect('/connexion', ['controller' => 'Users', 'action' => 'connexion']);
-        $builder->connect('/', ['prefix'=>'Account','controller' => 'Accounts', 'action' => 'login']);
+                $builder->connect('/', ['prefix'=>'Account','controller' => 'Accounts', 'action' => 'login']);
+        // $builder->connect('/', ['controller' => 'Users', 'action' => 'welcome']);
         $builder->connect('/rootAjaxaddVehicles', ['controller' => 'Users', 'action' => 'addVehicles']);
         $builder->connect('/rootAjaxnewRelance', ['controller' => 'Users', 'action' => 'newRelance']);
         $builder->connect('/rootAjaxConfirmPayment', ['controller' => 'Users', 'action' => 'confirmPayment']);
         $builder->connect('/rootAjaxConfirmRelance', ['controller' => 'Users', 'action' => 'confirmRelance']);
         $builder->connect('/users/search-phone', ['controller' => 'Users', 'action' => 'searchPhone']);
         $builder->connect('/messages/test-send', ['controller' => 'Messages', 'action' => 'testSend']);
-        
-        
         // Nouvelle route pour le tableau de bord d'administration sans préfixe.
         $builder->connect('/accounts/login', ['controller' => 'Accounts', 'action' => 'login']);
         $builder->connect('/users/dashboard', ['controller' => 'Users', 'action' => 'dashboard']);
         
         $builder->connect('/updateloginStardtup',['controller'=>'Startups','action'=>'changeStartup']);
-        $builder->connect('/updateloginStardtup2',['controller'=>'Startups','action'=>'changeStartup2']);
-
-
-        // Les routes pour la campagne publicitaire
-
+         $builder->connect('/updateloginCenter',['controller'=>'Startups','action'=>'changeCenter']);
+         
         $builder->connect('/send-sms', ['controller' => 'Messages', 'action' => 'sendSms']);
 
         $builder->connect('/send-campaign-sms', ['controller' => 'Messages', 'action' => 'sendCampaignSms']);
-      
-        /* '
+        
+        /* ' 
          * ...and connect the rest of 'Pages' controller's URLs.
          */
-        
         $builder->connect('/pages/*', 'Pages::display');
 
 
          /*
          * ...Les routes ajax.
          */ 
+         
+        $builder->connect('/cashboxes', ['controller' => 'CashBoxes', 'action' => 'index']);
+        
+         $builder->connect('/cashboxes/index', ['controller' => 'CashBoxes', 'action' => 'index']);
+         
+        $builder->connect('/cashboxes/report', ['controller' => 'CashBoxes', 'action' => 'report']);
         
         $builder->connect('/createUser', ['controller' => 'Users', 'action' => 'add', 'home']);
 
@@ -105,19 +115,14 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/account/login', ['controller' => 'Accounts', 'action' => 'login']);
         
         $builder->connect('/admin/login', ['controller' => 'Admins', 'action' => 'login']);
-
-        $builder->connect('/admin/add', ['controller' => 'Admins', 'action' => 'add']);
-
+        
         $builder->connect('/account/logout', ['controller' => 'Accounts', 'action' => 'logout']);
        
         $builder->connect('/admin/logout', ['controller' => 'Admins', 'action' => 'logout']);
-
-        $builder->connect('/test-sms', ['controller' => 'Pages', 'action' => 'sendSmsTest']);
-       
-        $builder->connect('/rootNewCashbox', ['controller' => 'CashBoxes', 'action' => 'add']);
-
-        $builder->connect('/rootOutTransaction', ['controller' => 'Cashboxes', 'action' => 'outtransact']);
         
+        $builder->connect('/rootNewCashbox', ['controller' => 'CashBoxes', 'action' => 'add']);
+        
+        $builder->connect('/rootOutTransaction', ['controller' => 'CashBoxes', 'action' => 'outtransact']);
         /*
          * Connect catchall routes for all controllers.
          *
