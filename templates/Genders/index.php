@@ -1,4 +1,4 @@
- <body class="hold-transition sidebar-mini" style="padding-top: 35px;">
+   <body class="hold-transition sidebar-mini" style="padding-top: 25px;">
   <section class="content" >
     <div class="container-fluid">
       <div class="row" >
@@ -21,8 +21,8 @@
                   <tr>
                     <th>#</th>
                     <th><?= __('Nom') ?></th>
-                  
                       <th><?= __('Frais de visite') ?></th>
+                        <th><?= __('Durée en mois') ?></th>
                     <th class="text-center"><?= __('Actions') ?></th>
                   </tr>
                 </thead>
@@ -33,6 +33,7 @@
                     <td><?= h($gender->name) ?></td>
                   
                      <td><?= h($gender->price) ?></td>
+                       <td><?= h($gender->numbermonthvisit) ?></td>
                     <td class="actions">
                           <?= $this->Html->link(__('<i class="fas fa-eye" style="color:#000;"></i>'), ['action' => 'view', $gender->id], ['escape' => false, 'title'=>'Consulter']) ?>
                           <?= $this->Html->link(__('<i class="fas fa-edit" style="color:#000;"></i>'), ['action' => 'edit', $gender->id], ['escape' => false,'title'=>'Modifier']) ?>
@@ -59,8 +60,6 @@
   </section>
 </div> 
 </div>
-
-
 <footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1030; background: #f8f9fa; padding: 10px 20px; border-top: 1px solid #dee2e6;">
   <div class="float-right d-none d-sm-inline">
     <b>Version</b> 3.2.0
