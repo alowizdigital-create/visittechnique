@@ -1,6 +1,6 @@
 <body class="hold-transition sidebar-mini" style="padding-top: 40px;">
     <!-- Content Header (Page header) -->
-    <section class="content-head">
+    <section class="content-head"> 
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
@@ -32,7 +32,7 @@
               <div class="col-md-12">
                  <div class="form-group">
                           <?=  $this->Form->control('custome', [
-                              'label' => 'Client',
+                              'label' => 'Nom',
                               'class' => 'form-control'
                           ]); ?>
                   </div>
