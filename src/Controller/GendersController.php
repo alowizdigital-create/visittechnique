@@ -17,7 +17,7 @@ class GendersController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+  public function index()
     {
         $user = $this->currentUser;
         $accountTable = $this->fetchTable('Accounts');
@@ -88,6 +88,9 @@ class GendersController extends AppController
         $this->set(compact('gender'));
     }
 
+
+
+
     /**
      * Edit method
      *
@@ -95,7 +98,7 @@ class GendersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id)
+  public function edit($id)
     {
         $gender = $this->Genders->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
