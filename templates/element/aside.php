@@ -14,15 +14,26 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-header"></li>
+          
           <li class="nav-item">
             <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'dashboard']) ?>" class="nav-link">
               <i class="nav-icon fas fa-home"></i>
               <p>
                 Home
+                <!--<span class="badge badge-info right">2</span>-->
+              </p>
+            </a>
+          </li>
+           <li class="nav-item">
+            <a href="<?= $this->Url->build(['controller' => 'Vehicles', 'action' => 'index']) ?>" class="nav-link">
+              <i class="nav-icon fas fa-car"></i>
+              <p>
+                Véhicules
               </p>
             </a>
           </li>
           <?php if ($userAuth->role == 'admin' ||  $userAuth->role == 'directeur' ) : ?> 
+
             <li class="nav-item">
             <a href="<?= $this->Url->build(['controller' => 'Discounts', 'action' => 'index']) ?>" class="nav-link">
                 <i class="nav-icon fas fa-percentage"></i>
@@ -30,65 +41,47 @@
             </a>
           </li>
           <?php endif; ?>
-             <li class="nav-item">
-            <a href="<?= $this->Url->build(['controller' => 'Vehicles', 'action' => 'add']) ?>" class="nav-link">
-              <i class="nav-icon fas fa-plus"></i>
-              <p>
-                Nouveau véhicule
-              </p>
-            </a>
-          </li>
-
+        
           <li class="nav-item">
             <a href="<?= $this->Url->build(['controller' => 'Cashboxes', 'action' => 'index']) ?>" class="nav-link">
                  <i class="nav-icon fas fa-cash-register"></i>
                 <p><?= __('Caisse(s)') ?></p>
                 <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="<?= $this->Url->build(['controller' => 'Contacts', 'action' => 'index']) ?>" class="nav-link">
-                 <i class="nav-icon fas fa-cash-register"></i>
-                <p><?= __('Contact') ?></p>
-                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
-            </a>
-          </li>
-           <li class="nav-item">
-            <a href="<?= $this->Url->build(['controller' => 'Teams', 'action' => 'index']) ?>" class="nav-link">
-                 <i class="nav-icon fas fa-cash-register"></i>
-                <p><?= __('Equipes') ?></p>
-                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
-               
-            </a>
-          </li>
-            <li class="nav-item">
-            <a href="<?= $this->Url->build(['controller' => 'Messages', 'action' => 'shedule']) ?>" class="nav-link">
-                 <i class="nav-icon fas fa-cash-register"></i>
-                <p><?= __('Message(s) rapide') ?></p>
-                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
+             
             </a>
           </li>
           <?php if ($userAuth->role == 'admin' ||  $userAuth->role == 'directeur' ) : ?> 
-          <li class="nav-item">
-            <a href="<?= $this->Url->build(['controller' => 'Genders', 'action' => 'index']) ?>" class="nav-link">
-                <i class="nav-icon fas fa-car"></i>
-                <p><?= __('Genres de véhicules') ?></p>
-            </a>
-          </li>
-            <li class="nav-item">
-              <a href="<?= $this->Url->build(['controller' => 'Reminders', 'action' => 'index']) ?>" class="nav-link">
+          <!--<li class="nav-item">-->
+          <!--  <a href="<?= $this->Url->build(['controller' => 'Genders', 'action' => 'index']) ?>" class="nav-link">-->
+          <!--      <i class="nav-icon fas fa-car"></i>-->
+          <!--      <p><?= __('Genres de véhicules') ?></p>-->
+          <!--  </a>-->
+          <!--</li>-->
+           
+            <?php endif; ?>
+          <!--<li class="nav-header">COMPTES</li>-->
+          
+           <li class="nav-item">
+              <a href="<?= $this->Url->build(['controller' => 'Messages', 'action' => 'sent']) ?>" class="nav-link">
                   <i class="nav-icon fas fa-bell"></i>
-                  <p><?= __('Rappels et modèles') ?></p>
+                  <p><?= __('SMS envoyés') ?></p>
               </a>
             </li>
-            <?php endif; ?>
-          <li class="nav-header">COMPTES</li>
            <li class="nav-item">
-                <a href="<?= $this->Url->build(['controller' => 'Messages', 'action' => 'index']) ?>" class="nav-link ">
+                <a href="<?= $this->Url->build(['controller' => 'Messages', 'action' => 'pending']) ?>" class="nav-link ">
                     <i class="nav-icon fas fa-paper-plane"></i>
                     <p><?= __('Les relances') ?></p>
                 </a>
             </li>
+         
+            <li class="nav-item">
+            <a href="<?= $this->Url->build(['controller' => 'Messages', 'action' => 'shedule']) ?>" class="nav-link">
+                 <i class="nav-icon fas fa-cash-register"></i>
+                <p><?= __('SMS rapide') ?></p>
+                <span class="badge badge-info right"><?= ($notifications) ?? 0 ?></span>
+               
+            </a>
+          </li>
             <?php if ($userAuth->role == 'admin') : ?>
                 <li class="nav-item">
                     <a href="<?= $this->Url->build(['controller' => 'Startups', 'action' => 'index']) ?>" class="nav-link ">
@@ -113,14 +106,14 @@
             </li>
             <?php if ($userAuth->role == 'admin') : ?>
               <li class="nav-item">
-                    <a href="http://localhost:8765/admin/logout" class="nav-link ">
+                    <a href="https://dossms.x-technova.com/admin/logout" class="nav-link ">
                    <i class="nav-icon fas fa-sign-out-alt"></i>
                     <p><?= __('Déconnexion') ?></p>
                 </a>
             </li>
             <?php else:  ?>
                  <li class="nav-item">
-                    <a href="http://localhost:8765/account/logout" class="nav-link ">
+                    <a href="https://dossms.x-technova.com/account/logout" class="nav-link ">
                    <i class="nav-icon fas fa-sign-out-alt"></i>
                     <p><?= __('Déconnexion') ?></p>
                 </a>
@@ -131,5 +124,5 @@
       </nav>
       <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
+    
   </aside>

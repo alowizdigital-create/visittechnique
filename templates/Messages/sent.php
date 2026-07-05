@@ -16,7 +16,7 @@
                         <th>Immatriculation</th>
                         <th>Date d'envoi</th>
                         <th>Statut</th>
-                        <th>Actions</th>
+                       
                     </tr>
                 </thead>
                 <tbody>
@@ -26,19 +26,12 @@
                     ?>
                     <tr>
                         <td><?= $count++ ?></td>
-                        <td><?= h($message->customer->name) ?></td>
+                        <td><?= $message->customer->name ?? 'Client inconnu' ?></td>
                         <td><?= h($message->receiver) ?></td>
                         <td><?= h($message->inspection->vehicle->registration_number ?? '-') ?></td>
                         <td><?= h($message->sent_date->nice()) ?></td>
                         <td><span class="<?= $statusClass ?>"><?= h($message->status) ?></span></td>
-                        <td class="actions-cell">
-                            <a href="<?= $this->Url->build(['action' => 'view', $message->id]) ?>" class="btn btn-sm transfer-btn">
-                                <i class="fas fa-eye"></i> Consulter
-                            </a>
-                            <a href="<?= $this->Url->build(['action' => 'edit', $message->id]) ?>" class="btn btn-sm open-btn">
-                                <i class="fas fa-edit"></i> Modifier
-                            </a>
-                        </td>
+                       
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

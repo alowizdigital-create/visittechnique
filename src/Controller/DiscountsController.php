@@ -17,7 +17,7 @@ class DiscountsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function index()
+   public function index()
     {
         $user = $this->currentUser;
         $accountTable = $this->fetchTable('Accounts');
@@ -54,7 +54,7 @@ class DiscountsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+  public function add()
     {
         $user = $this->currentUser;
         $accountTable = $this->fetchTable('Accounts');
@@ -82,10 +82,9 @@ class DiscountsController extends AppController
             }
             $this->Flash->error(__('The discount could not be saved. Please, try again.'));
         }
-        $genders = $this->Discounts->Genders->find('list', limit: 200)->where(['startup_id'=>$startup_id])->all();
+        $genders = $this->Discounts->Genders->find('list', limit: 200)->all();
         $this->set(compact('discount', 'genders'));
     }
-
 
     /**
      * Edit method
@@ -129,7 +128,6 @@ class DiscountsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);

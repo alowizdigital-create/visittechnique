@@ -1,4 +1,4 @@
-        <body class="hold-transition sidebar-mini" style="padding-top: 25px;">
+<body class="hold-transition sidebar-mini" style="padding-top: 25px;">
  <section class="content" style="margin-top: 54px;">
     <div class="container-fluid">
         <div class="row">
@@ -10,19 +10,19 @@
                     </div>
                     <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($allVehicle) ?> </h2>
                     <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'index']) ?>" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
-                        Liste des véhicules <i class="fas fa-arrow-right ms-2"></i>
+                        Consulter <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
             <div class="col-lg-3 col-6">
                 <div class="card p-3" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="text-secondary">SMS en attentes D'envoies</h5>
+                        <h5 class="text-secondary">SMS en attente d’envoi</h5>
                         <i class="fas fa-paper-plane fa-2x text-primary"></i>
                     </div>
                     <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($allPendingMessages) ?></h2>
                     <a href="<?=  $this->Url->Build(['controller'=>'Messages','action'=>'pending']) ?>" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
-                        Savoir plus <i class="fas fa-arrow-right ms-2"></i>
+                        Consulter <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
@@ -34,10 +34,11 @@
                     </div>
                     <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($thisMonthMessages) ?></h2>
                     <a href="<?=  $this->Url->Build(['controller'=>'Messages','action'=>'sent']) ?>" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
-                        Savoir plus <i class="fas fa-arrow-right ms-2"></i>
+                        Consulter <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
+           
             <div class="col-lg-3 col-6">
                 <div class="card p-3" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                     <div class="d-flex justify-content-between align-items-center">
@@ -46,31 +47,33 @@
                     </div>
                     <h2 class="mt-2" style="font-size: 2.5rem; color: #343a40; font-weight: bold;"><?= h($daylyCash) ?> Fcfa</h2>
                     <a href="/cashBoxes/index" class="text-decoration-none mt-2" style="color: #007bff; display: flex; align-items: center;">
-                        Voir la liste <i class="fas fa-arrow-right ms-2"></i>
+                        Consulter <i class="fas fa-arrow-right ms-2"></i>
                     </a>
                 </div>
             </div>
         </div>
+
         <div class="row mt-4">
             <div class="col-12">
                 <h4 class="text-primary mb-3">Actions rapides</h4>
             </div>
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card p-3 text-center" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    <h5 class="card-title mt-2">Nouveau véhicule</h5>
-                    <p class="card-text text-secondary mb-3">Enregistrer un nouveau véhicule dans la base de données.</p>
+                   
                     <a href="<?=  $this->Url->Build(['controller'=>'Vehicles','action'=>'add']) ?>" class="btn btn-outline-primary" style="border-radius: 50px;">
                         <i class="fas fa-plus me-2"></i> Ajouter un véhicule
                     </a>
                 </div>
             </div>
+              <h4 class="text-primary mb-3">Actions rapides</h4>
+        
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card p-3 text-center" style="border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    <h5 class="card-title mt-2">Relancer un client</h5>
-                    <p class="card-text text-secondary mb-3">Envoyer une relance par SMS à un client.</p>
+                   
                     <a href="#" class="btn btn-outline-primary" style="border-radius: 50px;" data-bs-toggle="modal" data-bs-target="#modalRelance">
-                        <i class="fas fa-bell me-2"></i> Relancer maintenant
+                        <i class="fas fa-bell me-2"></i> Relancer un véhicule
                     </a>
+                    
                 </div>
             </div>
         </div>
@@ -82,7 +85,12 @@
   </div>
   <strong>Copyright &copy; 2025 <a href="#">X-technova</a></strong> Tous droits réservés.
 
-  <a href="https://wa.me/237242232052" style="margin-left: 20px;"> Contactez-nous sur Whatsapp</a>
+  <a href="https://wa.me/237653843034" target="_blank" style="margin-left: 20px;"> Contactez-nous sur Whatsapp</a>
+   <button id="installBtn" class="btn btn-success" style="">
+            Installer l'application
+        </button>
+  
+
 </footer>
     <!-- Main content -->
      
@@ -118,6 +126,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- Modal de création de vehicule -->
 <div class="modal fade" id="detaisModal" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
@@ -224,6 +233,7 @@
   </div>
 </div>
 
+
 <script>
 $(document).ready(function() {
     $('#addTasksForm').submit(function(e) {
@@ -261,12 +271,12 @@ $(document).ready(function() {
     // Partie relance véhicule
     $('#newRelance').submit(function(e) {
         e.preventDefault();
-        
+      
         var data = {
             matricule: $('#inputRegister').val(),
             _csrfToken: myToken
         };
-
+        console.log(data);
         $.ajax({
             url: '/rootAjaxnewRelance',
             type: 'POST',
@@ -346,9 +356,9 @@ $('#confirmPaymentForm').submit(function(e) {
         gender_id: $('#inputGenderidHidden').val(),
         _csrfToken: myToken
     };
-  
+    console.log(data);
     $.ajax({
-        url: '/rootAjaxConfirmRelance',
+        url: '/rootAjaxConfirmPayment',
         type: 'POST',
         data: data,
         dataType: 'json',
@@ -356,8 +366,7 @@ $('#confirmPaymentForm').submit(function(e) {
             if (result.code == 200) {
                 $('#confirmPayment').modal('hide');
                 toastr.success(result.msg);
-                setTimeout(() => 
-                {
+                setTimeout(() => {
                     window.location = '/users/dashboard';
                 }, 2000);
             } else {
@@ -385,5 +394,71 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
+
+<script>
+    let deferredPrompt;
+    
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById("installBtn").style.display = "block";
+    });
+    
+    document.getElementById("installBtn").addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+    
+        deferredPrompt.prompt();
+    
+        const result = await deferredPrompt.userChoice;
+    
+        if (result.outcome === "accepted") {
+            console.log("L'utilisateur a installé l'application");
+        }
+    
+        deferredPrompt = null;
+        document.getElementById("installBtn").style.display = "none";
+    });
+</script>
+
+
+<script>
+let deferredPrompt;
+
+// Détection mobile
+function isMobile() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// L'événement est déclenché seulement si l'app est installable
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    const installBtn = document.getElementById("installBtn");
+
+    // On n'affiche le bouton que sur mobile
+    if (isMobile()) {
+        installBtn.style.display = "inline-block";
+    }
+});
+
+// Action du bouton
+document.getElementById("installBtn").addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt(); // Ouvre la popup d'installation native
+    const result = await deferredPrompt.userChoice;
+
+    // Si l'utilisateur installe l'app → on cache le bouton
+    if (result.outcome === "accepted") {
+        document.getElementById("installBtn").style.display = "none";
+    }
+
+    deferredPrompt = null;
+});
+</script>
+
 
 

@@ -17,13 +17,13 @@
           <li class="nav-header"></li>
           <li class="nav-item">
             <a href="/account/login" class="nav-link">
-             <i class="nav-icon fas fa-user"></i>
+            <i class="nav-icon fas fa-user"></i>
               <p>
                   Connexion
               </p>
             </a>
           </li>
-        
+       
           <li class="nav-item">
               <a href="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'display', 'faq']) ?>" class="nav-link">
                   <i class="nav-icon fas fa-question-circle"></i>

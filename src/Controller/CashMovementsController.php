@@ -17,70 +17,63 @@ class CashMovementsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      */
 
-    public function index()
-    {
-        $CashMovements = $this->fetchTable('CashMovements');
-        $this->fetchTable('CashBoxes');
-        $this->fetchTable('Users');
+public function index()
+{
+    $CashMovements = $this->fetchTable('CashMovements');
+    $this->fetchTable('CashBoxes');
+    $this->fetchTable('Users');
 
-        // Utilisateur courant
-        $user = $this->currentUser->id;
+    // Utilisateur courant
+    $user = $this->currentUser->id;
 
-        // Base query
-        $query = $CashMovements->find()
-            ->contain(['CashBoxes', 'Users'])
-            ->where(['CashMovements.create_uid'=> 2])
-            ->order(['CashMovements.created' => 'DESC']);
+    // Base query
+    $query = $CashMovements->find()
+        ->contain(['CashBoxes', 'Users'])
+        ->where(['CashMovements.create_uid'=> 2])
+        ->order(['CashMovements.created' => 'DESC']);
 
-        // --- Filtres GET ---
-        $search = $this->request->getQuery('search');
-        $from   = $this->request->getQuery('from');
-        $to     = $this->request->getQuery('to');
+    // --- Filtres GET ---
+    $search = $this->request->getQuery('search');
+    $from   = $this->request->getQuery('from');
+    $to     = $this->request->getQuery('to');
 
-        if (!empty($search)) {
-            $query
-                ->leftJoinWith('CashBoxes')
-                ->leftJoinWith('Users')
-                ->andWhere([
-                    'OR' => [
-                        'CashMovements.type LIKE'   => "%$search%",
-                        'CashMovements.motif LIKE'  => "%$search%",
-                        'CashBoxes.name LIKE'       => "%$search%",
-                        'Users.firstname LIKE'      => "%$search%",
-                        'Users.lastname LIKE'       => "%$search%",
-                    ]
-                ]);
-        }
-
-        if (!empty($from)) {
-            $query->andWhere(['CashMovements.created >=' => $from . ' 00:00:00']);
-        }
-
-        if (!empty($to)) {
-            $query->andWhere(['CashMovements.created <=' => $to . ' 23:59:59']);
-        }
-
-        // --- Options de pagination ---
-        $paginateOptions = ['order' => ['CashMovements.created' => 'DESC']];
-
-        // Si pas de filtre, limiter aux 2 dernières opérations
-        if (empty($search) && empty($from) && empty($to)) {
-            $paginateOptions['limit'] = 2;
-        }
-
-        // Pagination
-        $cashMovements = $this->paginate($query, $paginateOptions);
-
-        // Envoi à la vue
-        $this->set(compact('cashMovements', 'search', 'from', 'to'));
+    if (!empty($search)) {
+        $query
+            ->leftJoinWith('CashBoxes')
+            ->leftJoinWith('Users')
+            ->andWhere([
+                'OR' => [
+                    'CashMovements.type LIKE'   => "%$search%",
+                    'CashMovements.motif LIKE'  => "%$search%",
+                    'CashBoxes.name LIKE'       => "%$search%",
+                    'Users.firstname LIKE'      => "%$search%",
+                    'Users.lastname LIKE'       => "%$search%",
+                ]
+            ]);
     }
 
-    public function cashboxstate() {
-        $query = $this->CashMovements->find()
-        ->contain(['CashBoxes','Inspections']);
-        $cashMovements = $this->paginate($query);
-        $this->set(compact('cashMovements'));
+    if (!empty($from)) {
+        $query->andWhere(['CashMovements.created >=' => $from . ' 00:00:00']);
     }
+
+    if (!empty($to)) {
+        $query->andWhere(['CashMovements.created <=' => $to . ' 23:59:59']);
+    }
+
+    // --- Options de pagination ---
+    $paginateOptions = ['order' => ['CashMovements.created' => 'DESC']];
+
+    // Si pas de filtre, limiter aux 2 dernières opérations
+    if (empty($search) && empty($from) && empty($to)) {
+        $paginateOptions['limit'] = 2;
+    }
+
+    // Pagination
+    $cashMovements = $this->paginate($query, $paginateOptions);
+
+    // Envoi à la vue
+    $this->set(compact('cashMovements', 'search', 'from', 'to'));
+}
 
 
     /**
@@ -90,9 +83,8 @@ class CashMovementsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($uuid)
+   public function view($uuid)
     {
-        $this->CashMovements = $this->fetchTable('CashMovements');
         // $cashMovement = $this->CashMovements->get($id, contain: ['CashBoxes', 'Accounts']);
         $cashMovement = $this->CashMovements->find()->where(['CashMovements.uuid'=>$uuid])->contain(['CashBoxes','Accounts'])->first();
         // $cashMovement = $this->CashMovements->get($id, contain: ['CashBoxes', 'Accounts']);
@@ -234,6 +226,7 @@ class CashMovementsController extends AppController
         } else {
             $this->Flash->error(__('The cash movement could not be deleted. Please, try again.'));
         }
+
         return $this->redirect(['action' => 'index']);
     }
 }

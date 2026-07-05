@@ -310,11 +310,11 @@
         $(document).ready(function() {
             // Remplacez cette variable par la logique de votre application pour obtenir le token
             var loginButton = $('#loginButton');
-  
+
             // Fonction de connexion utilisateur
             $('#loginUser').submit(function(e) {
                 e.preventDefault();
-              
+                
                 // Désactiver le bouton et changer son texte
                 loginButton.prop('disabled', true).text('Connexion en cours...');
 

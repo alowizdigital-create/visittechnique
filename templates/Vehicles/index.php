@@ -7,17 +7,7 @@
             <!-- En-tête -->
             <div class="card-header d-flex justify-content-between align-items-center">
               <h3 class="card-title"><?= __('Liste des vehicules') ?></h3>
-               <div class="ml-auto">
-                        <!-- Bouton pour ouvrir le modal -->
-                       <!-- <button type="button" style="" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">
-                            <i class="fas fa-upload me-2"></i>Importer des vehicules
-                        </button> -->
-                     
-                  </div>
                   <div class="ml-auto">
-                   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">
-                      Importer des véhicules
-                  </button>
                       <?= $this->Html->link(__('Nouveau vehicule'), ['action' => 'add'], [
                         'class' => 'btn btn-primary text-white',
                         'style' => 'border:none;'
@@ -29,24 +19,25 @@
               <table id="example1" class="table table-bordered table-hover table-sm">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th><?= __('Immatriculation') ?></th>
-                      <th><?= __('Genre de vehicule') ?></th>
+                   <th>#</th>
+                      <th><?= __('Immatriculation') ?></th>
+                    
                       <th><?= __('Nom client') ?></th>
-                      <th><?= __('Numero client') ?></th>
-                    <th class="text-center"><?= __('Actions') ?></th>
+                        <th><?= __('Numero client') ?></th>
+                          <th><?= __('Genre de vehicule') ?></th>
+                      <th class="text-center"><?= __('Actions') ?></th>
                   </tr>
                 </thead>
                 <tbody>
                 <?php $count = 1; foreach ($vehicles as $vehicle): ?>
                 <tr>
                     <td><?= $count++ ?></td>
-                   <td><?= h($vehicle->registration_number) ?></td>
+                    <td><?= h($vehicle->registration_number) ?></td>
                    <td><?= h($vehicle->customer->name) ?></td>
                    <td><?= h($vehicle->customer->phone) ?></td>
-                   <td><?= h($vehicle->gender->name) ?></td>
+                    <td><?= h($vehicle->gender->name) ?></td>
                     <td class="actions">
-                            <?php if ($vehicle->shedule == 1): ?>
+                             <?php if ($vehicle->shedule == 1): ?>
                                <!-- <?php debug($vehicle->shedule); ?> -->
                                 <a href="<?= $this->Url->Build(['controller'=>'Vehicles','action'=>'index']) ?>" 
                                     id="Relancer" 
@@ -67,7 +58,6 @@
                             <?php endif; ?>
                           <input type="hidden" id="registrationNumber" value="<?= $vehicle->registration_number ?>">
                           <?= $this->Html->link(__('<i class="fas fa-edit" style="color:#000;"></i>'), ['action' => 'edit', $vehicle->id], ['escape' => false,'title'=>'Modifier']) ?>
-                          <?= $this->Html->link(__('<i class="fas fa-eye" style="color:#000;"></i>'), ['action' => 'view', $vehicle->id], ['escape' => false,'title'=>'Modifier']) ?>
                           <?= $this->Form->postLink(
                               '<i class="fas fa-trash-alt" style="color:#dc3545;"></i>',
                               ['action' => 'delete', $vehicle->id],
@@ -91,51 +81,13 @@
   </section>
 </div> 
 </div>
-
 <footer class="main-footer" style="position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1030; background: #f8f9fa; padding: 10px 20px; border-top: 1px solid #dee2e6;">
   <div class="float-right d-none d-sm-inline">
     <b>Version</b> 3.2.0
   </div>
-  <strong>Copyright &copy; 2025 <a href="#">X-technova</a></strong> Tous droits réservés.
+  <a href="https://wa.me/237653843034" target="_blank" style="margin-left: 20px;"> Contactez-nous sur Whatsapp</a>
 </footer>
 
-<!-- Modal d'importation -->
-<div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">Importer un fichier Excel / CSV</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        <?= $this->Form->create(null, [
-            'url' => ['controller' => 'Vehicles', 'action' => 'import'],
-            'type' => 'file',
-            'id' => 'importForm'
-        ]) ?>
-          <div class="mb-3">
-                  <div class="form-group">
-                      <?= $this->Form->control('gender_id',['options'=> $genders,'label'=>'Genre de véhicule ','class'=>'form-control','placeholder'=>'Ex: Vehicule lourd']); ?>
-                  </div>
-          </div>
-
-        <div class="mb-3">
-            <label>Choisir un fichier Excel ou CSV</label>
-            <input type="file" name="file" class="form-control" required>
-            <small class="text-muted">Formats acceptés : CSV, XLSX, XLS</small>
-        </div>
-
-        <?= $this->Form->button('Importer', [
-            'class' => 'btn btn-primary',
-            'id' => 'importBtn'
-        ]) ?>
-        <?= $this->Form->end() ?>
-      </div>
-    </div>
-  </div>
-</div>
 
    
 <!-- Modal de relance vehicule  --> 
@@ -170,7 +122,6 @@
     </div>
   </div>
 </div>
-
 
 
 <!-- Modal de création de vehicule -->
@@ -225,8 +176,6 @@
     </div>
   </div>
 </div>
-
-
 
 <!-- Modal de vérification de paiement -->
 <div class="modal fade" id="confirmPayment" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
@@ -283,7 +232,8 @@
 
 
 
-<!-- Modal de vérification de paiement pOUR LES RELANCES DU VEHICULE -->
+
+<!-- Modal de vérification de paiement  pour les nouvelles relances-->
 <div class="modal fade" id="confirmRelance" tabindex="-1" aria-labelledby="ModalDetails" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -336,6 +286,7 @@
   </div>
 </div>
 
+
 <script>
     $(document).ready(function() {
         // Cibler le formulaire généré par $this->Form->create($vehicle)
@@ -359,14 +310,13 @@
 </script>
 
 
-
 <script>
 $(document).ready(function() {
     // PART 1: Handle the initial 'Encaisse' button click
     $(document).on('click', '#Encaisse', function(e) {
       e.preventDefault();
         let immatriculastion = $(this).data('uuid');
-        alert(immatriculastion);
+      
         var data = {
             matricule: immatriculastion,
             _csrfToken: myToken
@@ -395,7 +345,29 @@ $(document).ready(function() {
                     $('#field-phone').text(result.customerPhone);
                     $('#field-name').text(result.customerName);
                     $('#field-amount').text(finalAmount);
-                  
+                    // let initialPrice = result.price;
+                    // alert(initialPrice);
+                    // $('#field-discount').empty().append('<option value="0">Selectionnez</option>');
+                    
+                    // $.each(result.discounts, function(id, amount) {
+                    //     $('#field-discount').append($('<option>', {
+                    //         text: amount,
+                    //         value: id
+                    //     }));
+                    // });
+                    
+                    // $('#field-amount').text(initialPrice);
+
+                    //  let finalAmount = 40000;
+                    //  $('#field-amount').text(finalAmount);
+                    
+                    // $('#field-discountEnd').on('change', function () {
+                    //     let selectedText = $(this).find('option:selected').text();
+                    //     let discount = parseFloat(selectedText) || 0;
+                    //     let finalAmount = initialPrice - discount;
+                    //     $('#field-amount').text(finalAmount);
+                    // });
+                    // Set the values of hidden inputs for the next AJAX call
                     $('#inputGenderidHidden').val(result.gender_id);
                     $('#inputRegisterHidden').val(result.register);
                     $('#inputAmount').val(result.price);
@@ -450,16 +422,13 @@ $(document).ready(function() {
 </script>
 
 
-
 <script>
 $(document).ready(function() {
     // PART 1: Handle the initial 'Encaisse' button click
     $(document).on('click', '#Relancer', function(e) {
       e.preventDefault();
         let immatriculastion = $(this).data('uuid');
-       
-        var data = 
-        {
+        var data = {
             matricule: immatriculastion,
             _csrfToken: myToken
         };
@@ -487,6 +456,7 @@ $(document).ready(function() {
                     $('#field-phone2').text(result.customerPhone);
                     $('#field-name2').text(result.customerName);
                     $('#field-amount2').text(finalAmount);
+                   
                     $('#inputGenderidHidden2').val(result.gender_id);
                     $('#inputRegisterHidden2').val(result.register);
                     $('#inputAmount2').val(result.price);
@@ -540,6 +510,7 @@ $(document).ready(function() {
 });
 </script>
 
+
 <script>
 $(document).ready(function() {
     $('.select2').select2({
@@ -554,4 +525,5 @@ $(document).ready(function() {
     });
 });
 </script>
+
 

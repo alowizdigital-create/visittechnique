@@ -12,11 +12,11 @@
                         'alt' => 'AdminLTE Logo'
                     ]) ?>
                 </div>
-                <h3 class="profile-username text-center"><?php echo htmlspecialchars($userAuth->name); ?></h3>
-                <p class="text-muted text-center"><?php echo htmlspecialchars($userAuth->role); ?></p>
+                <h3 class="profile-username text-center"><?php echo htmlspecialchars($userAuth->name) ?? ''; ?></h3>
+                <p class="text-muted text-center"><?php echo htmlspecialchars($userAuth->role) ?? ''; ?></p>
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
-                    <b>Téléphone</b> <a class="float-right"><?php echo htmlspecialchars($userAuth->phone); ?></a>
+                    <b>Téléphone</b> <a class="float-right"><?php echo htmlspecialchars($userAuth->phone) ?? ''; ?></a>
                   </li>
                 
                 </ul>
@@ -37,7 +37,6 @@
                 <div class="tab-content">
                               <div class="active tab-pane" id="settings">
 
-
                 <form class="form-horizontal" id="formUser" type='file' enctype='multipart/form-data'>
                 <div class="form-group row">
                     <label for="inputName" class="col-sm-2 col-form-label">Name</label>
@@ -46,13 +45,12 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <input type="hidden" id="uuid" name="cashbox_uuid" value="<?php echo htmlspecialchars($userAuth->uuid); ?>">
+                    <input type="hidden" id="uuid" name="cashbox_uuid" value="<?php echo htmlspecialchars($userAuth->uuid)?? ''; ?>">
                     <label for="inputPhone" class="col-sm-2 col-form-label">Phone</label>
                     <div class="col-sm-10">
-                        <input type="tel" value="<?php echo htmlspecialchars($userAuth->phone); ?>" class="form-control" id="phone" placeholder="Phone">
+                        <input type="tel" value="<?php echo htmlspecialchars($userAuth->phone) ?? ''; ?>" class="form-control" id="phone" placeholder="Phone">
                     </div>
                 </div>
-               
               <div class="form-group row">
                 <label for="inputPassword" class="col-sm-2 col-form-label">Mot de passe</label>
                 <div class="col-sm-10">

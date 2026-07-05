@@ -8,8 +8,6 @@ use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 use Cake\Mailer\Mailer;
 
-use function Cake\Error\debug;
-
 /**
  * Messages Controller
  *
@@ -17,40 +15,40 @@ use function Cake\Error\debug;
  */
 class MessagesController extends AppController
 {
-
-    public function testSend()
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+     public function index()
     {
-        $this->request->allowMethod(['post']); 
-        $data = $this->request->getData();
-        debug($data);
-        exit();
-        $to = $data['to'] ?? '';
-        $message = $data['message'] ?? '';
-        $from = 'vehicontrols';
-
-        $http = new Client();
-
-        $response = $http->post('https://BASE_URL/api/sms/send', [
-            'to' => $to,
-            'from' => $from,
-            'sms' => $message,
-            'type' => 'plain',
-            'channel' => 'dnd',
-            'api_key' => 'TA_CLE_API_TERMII_ICI'
-        ], [
-            'type' => 'json'
-        ]);
-
-        $json = $response->isOk() ? $response->getJson() : ['error' => 'Échec de l\'envoi'];
-
-        $this->set([
-            'success' => $response->isOk(),
-            'response' => $json,
-            '_serialize' => ['success', 'response']
-        ]);
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $accountLogin = $adminTable->findById($user->id)->first();
+            $adminLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $acountLoginId = $accountLogin->id;
+            $startup_id = $accountLogin->startup_id;
+        }
+        $query = $this->Messages->find()
+            ->where(['Messages.startup_id' => $startup_id])
+            ->contain(['Inspections', 'Customers'])
+             ->limit(200)
+             ->order(['Messages.id' => 'DESC']); 
+        $messages = $query->all()->toArray(); 
+            
+        $this->set(compact('messages'));
     }
-
-   public function sent()
+    
+    
+    
+    // Messages deja envoyé
+     public function sent()
     {
         $user = $this->currentUser;
         $accountTable = $this->fetchTable('Accounts');
@@ -66,27 +64,31 @@ class MessagesController extends AppController
 
         $startup_id = $accountLogin->startup_id;
 
-        // --- Requête principale ---
-        $query = $this->Messages->find()
-            ->where([
-                'Messages.startup_id' => $startup_id,
-                'Messages.status' => 'sent'
-            ])
-            ->contain([
-                'Inspections' => [
-                    'Vehicles', // 👈 Ajout des véhicules liés à chaque inspection
-                ],
-                'Customers'
-            ])
-            ->limit(200)
-            ->order(['Messages.id' => 'DESC']);
-
+          // --- Requête principale ---
+            $query = $this->Messages->find()
+                ->where([
+                    'Messages.startup_id' => $startup_id,
+                    'Messages.status' => 'sent'
+                ])
+                ->contain([
+                    'Inspections' => [
+                        'joinType' => 'LEFT',
+                        // 'Vehicles'
+                    ],
+                    
+                    'Customers' => [
+                        'joinType' => 'LEFT'
+                    ]
+                ])
+                ->limit(500)
+                ->order(['Messages.id' => 'DESC']);
+                
+                
         $messages = $query->all()->toArray();
 
         $this->set(compact('messages'));
     }
-
-
+    
       public function pending()
     {
         $user = $this->currentUser;
@@ -105,44 +107,13 @@ class MessagesController extends AppController
             $query = $this->Messages->find()
             ->where(['Messages.startup_id' => $startup_id,'Messages.status'=>'pending'])
             ->contain(['Inspections', 'Customers'])
-             ->limit(200)
+             ->limit(500)
              ->order(['Messages.id' => 'DESC']); 
             $messages = $query->all()->toArray(); 
         $this->set(compact('messages'));
     }
     
-
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index()
-    {
-        $user = $this->currentUser;
-        $accountTable = $this->fetchTable('Accounts');
-        $adminTable = $this->fetchTable('Admins');
-        $adminLogin = $adminTable->findById($user->id)->first();
-        if ($adminLogin) {
-            $accountLogin = $adminTable->findById($user->id)->first();
-            $adminLoginId = $accountLogin->id;
-            $startup_id = $accountLogin->startup_id;
-        }else {
-            $accountLogin = $accountTable->findById($user->id)->first();
-            $acountLoginId = $accountLogin->id;
-            $startup_id = $accountLogin->startup_id;
-        }
-            $query = $this->Messages->find()
-            ->where(['Messages.startup_id' => $startup_id])
-            ->contain(['Inspections', 'Customers'])
-            //  ->contain(['Inspections'])
-             ->limit(200)
-             ->order(['Messages.id' => 'DESC']); 
-            $messages = $query->all()->toArray(); 
-
-        $this->set(compact('messages'));
-    }
-
+    
 
     /**
      * View method
@@ -151,11 +122,12 @@ class MessagesController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id)
+    public function view($id = null)
     {
         $message = $this->Messages->get($id, contain: ['Inspections', 'Customers']);
         $this->set(compact('message'));
     }
+    
 
     /**
      * Add method
@@ -165,7 +137,8 @@ class MessagesController extends AppController
     public function add()
     {
         $message = $this->Messages->newEmptyEntity();
-        if ($this->request->is('post')) {
+        if ($this->request->is('post'))
+        {
             $message = $this->Messages->patchEntity($message, $this->request->getData());
             if ($this->Messages->save($message)) {
                 $this->Flash->success(__('The message has been saved.'));
@@ -185,6 +158,7 @@ class MessagesController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
+     
     public function edit($id = null)
     {
         $message = $this->Messages->get($id, contain: []);
@@ -201,7 +175,6 @@ class MessagesController extends AppController
         $customers = $this->Messages->Customers->find('list', limit: 200)->all();
         $this->set(compact('message', 'inspections', 'customers'));
     }
-
 
     /**
      * Delete method
@@ -222,8 +195,9 @@ class MessagesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
-
-
+    
+    
+    
     /**
      *
      * Cette partie est reservée aux SMS groupés 
@@ -234,23 +208,29 @@ class MessagesController extends AppController
     //  La page d'accueil
     public function shedule()
     {
+        
+        $user = $this->currentUser;
+        $accountTable = $this->fetchTable('Accounts');
+        $adminTable = $this->fetchTable('Admins');
+        $adminLogin = $adminTable->findById($user->id)->first();
+        if ($adminLogin) {
+            $startup_id = $adminLogin->startup_id;
+        }else {
+            $accountLogin = $accountTable->findById($user->id)->first();
+            $startup_id = $accountLogin->startup_id;
+        }
         $query = $this->Messages->find()
-            ->contain(['Contacts']);
+                    ->contain(['Contacts']);
         $messages = $this->paginate($query);
-        // $groupes = $this->fetchTable('Teams')->find()->where(['create_uid'=>$this->currentUser->id])->all();
-         $groupes = $this->fetchTable('Teams')->find('list', limit: 200)->where(['create_uid'=>$this->currentUser->id])->all();
+        // $groupes = $this->fetchTable('Teams')->find()->where(['startup_id'=>$startup_id])->all();
+         $groupes = $this->fetchTable('Teams')->find('list', limit: 200)->where(['startup_id'=>$startup_id])->all();
         // debug($groupes);die();
          $this->set(compact('messages','groupes'));
     }
 
 
-    
-    /**
-     * Envoi direct des SMS
-     */
 
-
-     public function sendSms()
+      public function sendSms()
     {
         // Accepter uniquement les requêtes POST
         $this->request->allowMethod(['post']);
@@ -358,7 +338,7 @@ class MessagesController extends AppController
                 $message->content    = $content;
                 $message->status     = 'sent'; // Supposer que l'envoi réussit ou est en cours
                 $message->receiver   = $cleanedNumber; // Enregistrement du numéro nettoyé
-                $message->contact_id = 19; // À adapter si vous avez la logique pour trouver l'ID du contact
+                $message->contact_id = 25; // À adapter si vous avez la logique pour trouver l'ID du contact
                 $message->sent_date  = new FrozenTime();
                 $message->create_uid = $this->currentUser->id;
                 $message->write_uid  = $this->currentUser->id;
@@ -387,8 +367,6 @@ class MessagesController extends AppController
 
         //    debug('fjf');
         //         die();
-
-        
         // 5. Réponse finale au client
         if ($sentCount > 0) {
             $msg = $sentCount . ' message(s) envoyé(s) avec succès.';
@@ -418,63 +396,26 @@ class MessagesController extends AppController
     }
 
 
+
   
 
     /**
      * Envoi direct d’un SMS via l’API AvlyText
      */
 
-
-    public function sendDirectSms($recipient, $content, $sender)
-{
-    $apiToken = '1523|0XzFUAtbKmVpjJufqROEEEc9nqePzVquAGiWSv25480b08bf';
-    $endpoint = 'https://app.techsoft-sms.com/api/http/sms/send';
-
-    // debug($sender);
-    // die();
-
-    $recipient = '237' . $recipient;
-    $data = [
-        'api_token'  => $apiToken,
-        'recipient'  => $recipient,
-        'sender_id'  => 'CCT GODWIN',
-        'type'       => 'plain',
-        'message'    => $content,
-    ];
-
-    // $http = new \Cake\Http\Client();
-
-    $http = new Client();
-
-    $response = $http->post(
-        $endpoint,
-        json_encode($data),
-        [
-            'type' => 'json',
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ]
-        ]
-    );
-
-    if ($response->isOk()) {
-        //  debug($response->getJson()); die();
-    } else {
-        // debug($response->getStatusCode());
-        // debug($response->getStringBody());
-        // die();
-    }
-}
     
-     public function sendDirect($recipient, $content,$sender,$operateur,$startupName)
+    
+     public function sendDirectSms($recipient, $content,$sender,$operateur,$startupName)
       {
          // 🚨 CONFIGURATION DE TEST (REMPLACEZ PAR VOS VALEURS RÉELLES) 🚨
-        $apiKey    = '1523|0XzFUAtbKmVpjJufqROEEEc9nqePzVquAGiWSv25480b08bf';
-        $endpoint  = 'https://app.techsoft-sms.com/api/http/sms/send';
+        $apiKey    = '4IlrXpZRlqp4bLOdjnBCyS6qk68uleWE7ttHRsOyJF7ydOH97Ti6H7llfmDicjdNbuY2';
+        $endpoint  = 'https://api.avlytext.com/v1/sms';
         $chaine_reduite = substr($startupName, 0, 11);
         $chaine_reduite = $sender;
 
+        //  debug($sender);die();
+
+        // debug($sender);die();
 
         // if (condition) {
         //    $sender  =  'DosSMS';
@@ -488,7 +429,7 @@ class MessagesController extends AppController
         if (!is_null($operateur)||!empty($operateur))
         {
             if ($operateur == 'MTN') {
-            $sender  =  'CCT GODWIN';
+            $sender  =  'CCT';
             }else
             {
             $sender  =  $chaine_reduite;
@@ -498,21 +439,20 @@ class MessagesController extends AppController
             $sender  =  'CCT GODWIN';
         }
 
-        $sender = 'TECHSOF-SMS';
+        // debug($sender);die();
+        $sender = 'CCT GODWIN';
        
         $recipient = '+237' .''. $recipient;    
         $text      = $content;
-
-        // debug($sender);die();
+       
         try {
             // 1. Initialisation du Client HTTP (simule la commande curl)
             $http = new Client();
+
             // 2. Préparation de l'URL avec la clé API en Query Parameter
             $urlWithKey = $endpoint . '?api_key=' . urlencode($apiKey);
              
             // 3. Définition des données JSON (pour le --data)
-
-
             $data = [
                 'sender' => $sender,
                 'recipient' => $recipient,
@@ -532,23 +472,21 @@ class MessagesController extends AppController
                 $data, 
                 $options
             );
-           
             if ($response->isOk()) {
-                // debug($response);die();
                 $apiResponse = $response->getJson();
                 //  debug($apiResponse);die();
                 // $this->Flash->success('✅ SMS envoyé avec succès! Statut API: ' . h($apiResponse['status']));
             } else {
-                $this->Flash->error('❌ Échec de l\'envoi. Code HTTP: ' . $response->getStatusCode());
-                $this->Flash->error('Réponse API: ' . $response->getStringBody());
+                // $this->Flash->error('❌ Échec de l\'envoi. Code HTTP: ' . $response->getStatusCode());
+                // $this->Flash->error('Réponse API: ' . $response->getStringBody());
             }
         
         } catch (\Exception $e) {
-           debug($response);die();
+          
         }
     }
-
-
+    
+     
     public function sendCampaignSms()
     {
         $user = $this->currentUser;
@@ -561,6 +499,7 @@ class MessagesController extends AppController
             $accountLogin = $accountTable->findById($user->id)->first();
             $startup_id = $accountLogin->startup_id;
         }
+
         $startup = $this->fetchTable('Startups')->find()->where(['id'=>$startup_id])->first();
         $startupTable =  $this->fetchTable('Startups');
         $sms_nbr = $startup->sms_nbr;
@@ -722,13 +661,13 @@ class MessagesController extends AppController
                 $message->create_uid = $this->currentUser->id ?? null; 
                 $message->write_uid  = $this->currentUser->id ?? null;
                 $message->uuid       = Text::uuid();
-                $message->contact_id  =  19;
+                $message->contact_id  =  25;
                 $message->startup_id = $startup_id;
                 if ($MessagesTable->save($message))
                     {
                     $startup->sms_nbr -= 1;
                     $startupTable->save($startup);
-                    // $this->sendDirectSms($recipient,$content,$sender,$operateur,$startupName);
+                    $this->sendDirectSms($recipient,$content,$sender,$operateur,$startupName);
                     $sentCount++;
                 } 
             } else {
@@ -752,4 +691,6 @@ class MessagesController extends AppController
         ];
         return $this->Json($result);
     }
+    
+    
 }

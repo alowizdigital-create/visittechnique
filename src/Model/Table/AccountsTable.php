@@ -42,13 +42,6 @@ class AccountsTable extends Table
         $this->setTable('accounts');
         $this->setDisplayField('uuid');
         $this->setPrimaryKey('id');
-        $this->hasOne('Startups', [
-            'foreignKey' => 'account_id',
-        ]);
-        
-          $this->hasMany('Cashboxes', [
-            'foreignKey' => 'cash_box_id',
-        ]);
 
         $this->addBehavior('Timestamp');
     }

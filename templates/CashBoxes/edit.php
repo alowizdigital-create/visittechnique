@@ -7,7 +7,7 @@
 <div class="row">
     <aside class="column">
         <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
+            <h4 class="heading"><?= __('Actions') ?></h4> 
             <?= $this->Form->postLink(
                 __('Delete'),
                 ['action' => 'delete', $cashBox->id],
@@ -25,6 +25,10 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('solde_initial');
                     echo $this->Form->control('solde_actuel');
+                    echo $this->Form->control('statut');
+                    echo $this->Form->control('responsable_id');
+                    echo $this->Form->control('create_uid');
+                    echo $this->Form->control('uuid');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?>

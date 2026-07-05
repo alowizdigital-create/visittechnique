@@ -93,6 +93,7 @@ class InspectionsController extends AppController
             $inspection = $this->Inspections->patchEntity($inspection, $this->request->getData());
             if ($this->Inspections->save($inspection)) {
                 $this->Flash->success(__('The inspection has been saved.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The inspection could not be saved. Please, try again.'));

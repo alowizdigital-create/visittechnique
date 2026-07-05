@@ -404,142 +404,20 @@
             </h1>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card stat-input">
-                <p>Entrée(s)</p>
-                <p id="stat-input"><?= $this->Number->format($amountInput) ?? 0 ?> Fcfa</p>
-            </div>
-            <div class="stat-card stat-output">
-                <p>Sortie(s)</p>
-                <p id="stat-output"><?= $this->Number->format($amountInout) ?? 0 ?> Fcfa</p>
-            </div>
-            <div class="stat-card stat-current">
-                <p>Solde actuel</p>
-                <p id="stat-current"><?= $this->Number->format($amountActuel) ?? 0 ?>Fcfa</p>
-            </div>
-        </div>
-
         <div class="card">
             <div class="card-header">
                 <h2>
-                    <i data-lucide="list-checks"></i> Liste de caisses
-                </h2>
-                <?php if ($userData->role == 'admin' || $userData->role == 'directeur'): ?>
-                          <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#newcahbox" > <?= __('Nouvelle caisse') ?><i data-lucide="plus"></i></a>
-                <?php endif; ?>
-            </div>
-
-            <div class="table-container" id="cashbox-table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nom de la caisse</th>
-                            <th>Solde actuel</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cashbox-list-body">
-                        <?php $count = 1; foreach ($cashBoxes as $cashBox): ?>
-                            <tr>
-                                <td><?= $count ?></td>
-                                   <!--<td><?= $cashBox->create_uid ?></td>-->
-                                <td><?= h($cashBox->name) ?></td>
-                                <td><?= h($cashBox->solde_actuel) ?></td>
-                                <td>
-                                    <span class="status-<?= h($cashBox->statut) ?>">
-                                        <?= h($cashBox->statut) ?>
-                                    </span>
-                                </td>
-                                <td class="actions-cell">
-                                    <!-- <button type="button" data-uuid="<?= $cashBox->uuid ?>" onclick="prepareTransfer(this)" class="transfer-btn btn-small">
-                                        <i data-lucide="arrow-right"></i> Transferer
-                                    </button> -->
-                          <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>" data-uuid="<?= $cashBox->uuid ?>"  class="transfer-btn btn-small"  data-bs-toggle="modal" data-bs-target="#modalRelance" > <?= __('Transferer') ?></a>
-                          
-                            <a href="<?=  $this->Url->Build(['controller'=>'Cashboxes']) ?>"  class="btn btn-primary btn-small btn-icon-sm"  data-bs-toggle="modal" data-bs-target="#outcash" > <?= __('Decaissement') ?>
-                              </a>
-
-                                    <!--<?php if ($cashBox->statut !== 'close') : ?>-->
-                                    <!--    <?= $this->Html->link(__('Ouvrir'), ['action' => 'transactions', $cashBox->uuid], ['class' => 'open-btn btn-small']) ?>-->
-                                    <!--    <?= $this->Html->link(__('Fermer'), ['action' => 'close', $cashBox->uuid], ['class' => 'close-btn btn-small']) ?>-->
-                                    <!--<?php endif; ?>-->
-                                </td>
-                            </tr>
-                        <?php $count++; endforeach; ?>
-                    </tbody>
-                    
-                   
-                </table>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2>
-                    <i data-lucide="trending-up"></i> Les opérations de la caisse
+                    <i data-lucide="trending-up"></i> Rapports
                 </h2>
             </div>
 
-            <?= $this->Form->create(null, ['type' => 'get', 'id' => 'filter-form', 'class' => 'filter-form']) ?>
-                <div class="form-group form-group-flex">
-                    <label for="search">Types d'operations</label>
-                      <?= $this->Form->control('search', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'options' => [
-                                '' => '▼ Toutes les operations',
-                                'entrée' => 'Encaissements',
-                                'Decaissement' => 'Sorties de fonds',
-                                'Transfert' => 'Transferts de fonds'
-                            ],
-                            'placeholder' => 'Mot-clé',
-                            'value' => $search ?? ''
-                        ]) ?>
-                </div>
-                 <div class="form-group form-group-flex">
-                    <label for="search">Mot-clé </label>
-                  <?= $this->Form->control('search2', [
-                        'label' => false,
-                        'class' => 'form-control',
-                        'placeholder' => 'Mot-clé',
-                        'value' => $search2 ?? ''
-                    ]) ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="from">Date de début</label>
-                    <?= $this->Form->control('from', [
-                        'label' => false,
-                        'type' => 'date',
-                        'class' => 'form-control',
-                        'value' => $from ?? ''
-                    ]) ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="to">Date de fin</label>
-                    <?= $this->Form->control('to', [
-                        'label' => false,
-                        'type' => 'date',
-                        'class' => 'form-control',
-                        'value' => $to ?? ''
-                    ]) ?>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-icon-sm">
-                    <i data-lucide="search"></i> Rechercher
-                </button>
-            <?= $this->Form->end() ?>
-
+          
 
             <div class="table-container" id="operations-table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th><?= $this->Paginator->sort('type', 'Type') ?></th>
-                              <th><?= $this->Paginator->sort('user_id', 'Emeteur') ?></th>
+                            <th><?= $this->Paginator->sort('user_id', 'Emeteur') ?></th>
                             <th><?= $this->Paginator->sort('cash_box_id', 'Recepteur') ?></th>
                             <th><?= $this->Paginator->sort('montant', 'Montant') ?></th>
                             <th><?= $this->Paginator->sort('created', 'Date') ?></th>
@@ -549,11 +427,6 @@
                     <tbody>
                         <?php foreach ($cashMovements as $cashMovement): ?>
                             <tr>
-                                <td>
-                                    <span class="type-<?= strtolower(h($cashMovement->type)) ?>">
-                                        <?= h($cashMovement->type) ?>
-                                    </span>
-                                </td>
                                   <td><?= $cashMovement->account->username ?? '' ?></td>
                                 <td><?= $cashMovement->cash_box->name ?? '' ?></td>
                                 <td><?= $this->Number->format($cashMovement->montant) ?></td>
@@ -580,7 +453,6 @@
             </div>
 
         </div>
-
     </div>
 
     
@@ -825,6 +697,7 @@
 
        
     </script>
+
     
 
 <script>
