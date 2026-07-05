@@ -39,7 +39,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # Installer les dépendances PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --optimize-autoloader --no-interaction
 
 # Donner les permissions nécessaires à CakePHP
 RUN chown -R www-data:www-data /var/www/html \
