@@ -564,7 +564,7 @@ public function ad()
         // if ($this->request->is('ajax','post')) {
           $duration = $gender->numbermonthvisit;
                 if ($duration == 3) {
-                    $newEndDate = (new DateTime())->modify('+90 days');
+                    $newEndDate = (new DateTime())->modify('+90 days'); 
                 }elseif ($duration == 6) {
                     $newEndDate = (new DateTime())->modify('+180 days');
                 }elseif ($duration == 9) {
