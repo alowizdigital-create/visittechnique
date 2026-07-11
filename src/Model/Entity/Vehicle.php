@@ -49,8 +49,4 @@ class Vehicle extends Entity
         'uuid' => true,
         'customer' => true,
     ];
-
-    // public function _getCuctomerName(){
-    //    $Customers = $this->fetchTable('Customers');
-    // }
 }
