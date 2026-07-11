@@ -16,7 +16,7 @@ return [
      * Development Mode:
      * true: Errors and warnings shown.
      */
-    'debug' => filter_var(env('DEBUG', true), FILTER_VALIDATE_BOOLEAN),
+    'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
 
     /*
      * Configure basic information about the application.
@@ -94,7 +94,7 @@ return [
     /*
      * Configure the cache adapters.
      */
-    'Cache' => [
+  'Cache' => [
         'default' => [
             'className' => FileEngine::class,
             'path' => CACHE,
@@ -109,7 +109,7 @@ return [
          */
         '_cake_translations_' => [
             'className' => FileEngine::class,
-            'prefix' => 'myapp_cake_translations_',
+            'prefix' => 'myapp_cake_core_',
             'path' => CACHE . 'persistent' . DS,
             'serialize' => true,
             'duration' => '+1 years',
@@ -131,6 +131,7 @@ return [
             'url' => env('CACHE_CAKEMODEL_URL', null),
         ],
     ],
+
 
     /*
      * Configure the Error and Exception handlers used by your application.
@@ -175,7 +176,12 @@ return [
         'log' => true,
         'trace' => true,
         'ignoredDeprecationPaths' => [],
+         'errorLevel' => E_ALL & ~E_USER_DEPRECATED,
     ],
+
+
+
+
 
     /*
      * Debugger configuration
@@ -245,9 +251,12 @@ return [
     'Email' => [
         'default' => [
             'transport' => 'default',
-            'from' => ['team@minalinks.com' => 'MinaLinks'], // <-- corrige ici
-            'charset' => 'utf-8',
-            'headerCharset' => 'utf-8',
+            'from' => 'you@localhost',
+            /*
+             * Will by default be set to config value of App.encoding, if that exists otherwise to UTF-8.
+             */
+            //'charset' => 'utf-8',
+            //'headerCharset' => 'utf-8',
         ],
     ],
 
@@ -264,38 +273,55 @@ return [
      *   E.g set it to 'utf8mb4' in MariaDB and MySQL and 'utf8' for any
      *   other RDBMS.
      */
-
-
-        'Datasources' => [
-                /*
-                 * These configurations should contain permanent settings used
-                 * by all environments.
-                 *
-                 * The values in app_local.php will override any values set here
-                 * and should be used for local and per-environment configurations.
-                 *
-                 * Environment variable-based configurations can be loaded here or
-                 * in app_local.php depending on the application's needs.
-                 */
-           'default' => [
+    'Datasources' => [
+        /*
+         * These configurations should contain permanent settings used
+         * by all environments.
+         *
+         * The values in app_local.php will override any values set here
+         * and should be used for local and per-environment configurations.
+         *
+         * Environment variable-based configurations can be loaded here or
+         * in app_local.php depending on the application's needs.
+         */
+        'default' => [
             'className' => Connection::class,
             'driver' => Mysql::class,
-        
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', 3306),
-            'username' => env('DB_USERNAME', 'visituser'),
-            'password' => env('DB_PASSWORD', 'Jeanpierre236#'),
-            'database' => env('DB_DATABASE', 'visittechnique'),
-        
             'persistent' => false,
             'timezone' => 'UTC',
+
+            /*
+             * For MariaDB/MySQL the internal default changed from utf8 to utf8mb4, aka full utf-8 support
+             */
             'encoding' => 'utf8mb4',
+
+            /*
+             * If your MySQL server is configured with `skip-character-set-client-handshake`
+             * then you MUST use the `flags` config to set your charset encoding.
+             * For e.g. `'flags' => [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4']`
+             */
             'flags' => [],
             'cacheMetadata' => true,
             'log' => false,
+
+            /*
+             * Set identifier quoting to true if you are using reserved words or
+             * special characters in your table or column names. Enabling this
+             * setting will result in queries built using the Query Builder having
+             * identifiers quoted when creating SQL. It should be noted that this
+             * decreases performance because each query needs to be traversed and
+             * manipulated before being executed.
+             */
             'quoteIdentifiers' => false,
-        
-            'url' => env('DATABASE_URL', null),
+
+            /*
+             * During development, if using MySQL < 5.6, uncommenting the
+             * following line could boost the speed at which schema metadata is
+             * fetched from the database. It can also be set directly with the
+             * mysql configuration directive 'innodb_stats_on_metadata = 0'
+             * which is the recommended value in production environments
+             */
+            //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
         ],
 
         /*
