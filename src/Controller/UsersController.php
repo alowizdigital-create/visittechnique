@@ -614,8 +614,7 @@ class UsersController extends AppController
     }
 
 
-
-  public function confirmPayment() {
+public function confirmPayment() {
     if ($this->request->is(['ajax', 'post'])) {
         $user = $this->currentUser;
         $accountTable = $this->fetchTable('Accounts');
@@ -959,7 +958,6 @@ class UsersController extends AppController
         return $this->Json(['code' => '500', 'msg' => 'Une erreur est survenue lors de l\'enregistrement de l\'inspection ou du mouvement de caisse.']);
     }
     }
-    
     
     
     public function confirmRelance() 
