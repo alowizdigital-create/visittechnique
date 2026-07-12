@@ -4,7 +4,7 @@
       <div class="row" >
         <div class="col-12" style="margin-top: 54px;">
           <div class="card">
-            <!-- En-tête -->
+            <!-- En-tête --> 
             <div class="card-header d-flex justify-content-between align-items-center">
               <h3 class="card-title"><?= __('Liste des vehicules') ?></h3>
                   <div class="ml-auto">
