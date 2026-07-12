@@ -397,6 +397,7 @@ $(document).ready(function() {
             gender_id: $('#inputGenderidHidden').val(),
             _csrfToken: myToken
         };
+        alert('totuoite')
         $.ajax({
             url: '/rootAjaxConfirmPayment',
             type: 'POST',
@@ -414,7 +415,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                toastr.error('Erreur lors de la confirmation du paiement');
+                toastr.error('Erreur lors de la confirmation du paiement SDSD');
             }
         });
     });
