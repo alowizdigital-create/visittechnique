@@ -713,8 +713,9 @@ public function confirmPayment() {
         $inspection->create_uid = $this->currentUser->id;
         $inspection->write_uid = $this->currentUser->id;
         $inspection->uuid =  $inspectionUuid;
+        $inspection->startup_id = 12;
         $vehicle->next_shedule = 1;
-        $vehicle->shedule = 1;
+        $vehicle->shedule = 1; 
         // Pour des raisons d erreurs le champ brand est utilisé pour stocker uuid de l'inpection 
         // ce mecanisme est mis en en place pour le passage chaque vehicule a l'entreprise au centre cela permet de retrouver la derniere inspection liée a ce vehicule 
         $vehicle->brand = $inspectionUuid;
