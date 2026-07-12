@@ -212,6 +212,7 @@
                 ]) ?>
                 <div class="company-info">
                     <div class="company-name"><?= h($company->name) ?></div>
+                     <div class="company-name"><?= h($company->id) ?></div>
                 </div>
                 <div class="status-dot"></div>
             </a>
