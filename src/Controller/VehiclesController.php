@@ -75,148 +75,180 @@ class VehiclesController extends AppController
  
 
 
-      public function add()
-    {
-        $vehicle = $this->Vehicles->newEmptyEntity();
-         // Recuperer l id de startup de la personne connecter
-        $user = $this->currentUser;
-        $accountTable = $this->fetchTable('Accounts');
-        $adminTable = $this->fetchTable('Admins');
-        $adminLogin = $adminTable->findById($user->id)->first();
-        if ($adminLogin) {
-            $startup_id = $adminLogin->startup_id;
-        }else {
-            $accountLogin = $accountTable->findById($user->id)->first();
-            $startup_id = $accountLogin->startup_id;
-        }
-        if ($this->request->is('post')) {
-            $vehicle = $this->Vehicles->patchEntity($vehicle, $this->request->getData());
-            
-            $numberPhone = $this->request->getData('phone');
-            $longueur = strlen((string)$numberPhone);
-            if ($longueur < 9 || $longueur > 9 ) {
-                return $this->redirect(['action' => 'add']);
-            }
+  public function add()
+{
+    $vehicle = $this->Vehicles->newEmptyEntity();
 
-            $motAvecEspace = $vehicle->registration_number;
-            $motSansEspace = ltrim($motAvecEspace);
-            $registerImma = $this->Vehicles->find()->where(['registration_number'=>$motSansEspace])->first();
-            
-            if ($registerImma)
-            {
-                 $this->Flash->error(__('Ce véhicule est déja enregistré.'));
-                return $this->redirect(['action' => 'add']);
-            }
-            
-            $register = $vehicle->registration_number;
-            $register1 = str_replace(' ', '', $vehicle->registration_number);
-            $vehicleTest = $this->Vehicles->find()
-          ->where([
-                'OR' => [
-                'registration_number' => $register,
-                'registration_number' => $register1
-                  ]
-              ])
-              ->first();
+    // Date du jour par défaut
+    $vehicle->lastvisitdate = date('Y-m-d');
 
-            if (!empty($vehicleTest)) { 
-                $this->Flash->error(__('Ce véhicule est déja enregistré.'));
-                return $this->redirect(['action' => 'add']);
-            }
-            
-            $customer_id = $this->request->getData('custome');
-            $customer_phone = $this->request->getData('phone');
-             $lastVisitDateTrue = $this->request->getData('date');
-            $lastVisitDate = $this->request->getData('date');
-            if ($lastVisitDate) {
-                $lastVisitDate = new DateTime($lastVisitDate);
-                $endAndSentDate = ($lastVisitDate)->modify('+90 days');
-            }else{
-                $endAndSentDate =  (new DateTime())->modify('+90 days');
-            }
-            $customerId = $customer_id[0];
-            // debug($endAndSentDate);die();
-            $convert = (int)$customer_id[0];
-            // debug($convert);die();
-            if ($convert == 0) {
-                $Customers = $this->fetchTable('Customers');
-                $customer = $Customers->newEmptyEntity();
-                $customer->name = $customer_id;
-                $customer->phone = $customer_phone;
-                $customer->create_uid = $this->currentUser->id;
-                $customer->write_uid = $this->currentUser->id;
-                $customer->startup_id = $startup_id;
-                $customer->uuid = Text::uuid();
-                if ($Customers->save($customer)) {
-                  $customerId = $customer->id;
-                }
-                
-                $contact = $this->fetchTable('Contacts')->find()->where(['phone'=>$customer_phone])->first();
-                
-                if(empty($contact))
-                {
-                    $Contacts = $this->fetchTable('Contacts');
-                    $contact  = $Contacts->newEmptyEntity();
-                    $contact->name = $customer_id;
-                    $contact->phone = $customer_phone;
-                    $contact->create_uid = $this->currentUser->id;
-                    $contact->startup_id = $startup_id;
-                    $contact->uuid = Text::uuid();
-                    if ($Contacts->save($contact)) {
-                       $contactId = $contact->id;
-                    }else{
-                    }
-                }else{
-                  $contactId = $contact->id;
-                }
-            }
-            $vehicle->lastvisitdate = $lastVisitDateTrue;
-            $vehicle->customer_id = $customerId;
-            $vehicle->create_uid = $this->currentUser->id;
-            $vehicle->write_uid = $this->currentUser->id;
-            $vehicle->startup_id = $startup_id;
-            $vehicle->uuid = Text::uuid();
-            
-            $gender_id = $vehicle->gender_id;
-            // debug($vehicle);die();
-            if ($this->Vehicles->save($vehicle)) {
-                
-                      // debug($vehicle);die();
-                    $TeamTable = $this->fetchTable('Teams');
-                    $ContactTeamTable = $this->fetchTable('ContactsTeams');
-                    // debug($ContactTeamTable);die();  
-                    $hisTeam = $TeamTable->find()->where(['gender_id'=>$gender_id])->first();
-    
-                    $hisTeamiD = $hisTeam->id;
-                    $contactTeam  = $ContactTeamTable->newEmptyEntity();
-                    $contactTeam->contact_id = $contactId;
-                    $contactTeam->team_id = $hisTeamiD;
-                    $ContactTeamTable->save($contactTeam);
-                    
-                 return $this->redirect(['action' => 'index']);
+    // Recuperer l id de startup de la personne connecter
+    $user = $this->currentUser;
+    $accountTable = $this->fetchTable('Accounts');
+    $adminTable = $this->fetchTable('Admins');
 
-                    }
-                 return $this->redirect(['action' => 'index']);
+    $adminLogin = $adminTable->findById($user->id)->first();
 
-            // }
-        }
-        $Reminders = $this->fetchTable('Reminders');
-    
-        $genders = $this->fetchTable('Genders')->find('list', limit: 200)->all();
-
-        $loginstartupId = $startup_id;
-        $customers = $this->Vehicles->Customers->find()->where(['startup_id'=>$loginstartupId])
-            ->select(['id', 'name', 'phone'])
-            ->limit(200)
-            ->all();
-
-        $customerOptions = [];
-            foreach ($customers as $customer) {
-                $customerOptions[$customer->id] = $customer->name . ' (' . $customer->phone . ')';
-            }
-      $this->set(compact('vehicle', 'customers', 'customerOptions', 'genders'));
+    if ($adminLogin) {
+        $startup_id = $adminLogin->startup_id;
+    } else {
+        $accountLogin = $accountTable->findById($user->id)->first();
+        $startup_id = $accountLogin->startup_id;
     }
 
+    if ($this->request->is('post')) {
+
+        $vehicle = $this->Vehicles->patchEntity($vehicle, $this->request->getData());
+
+        $numberPhone = $this->request->getData('phone');
+        $longueur = strlen((string)$numberPhone);
+
+        if ($longueur < 9 || $longueur > 9) {
+            return $this->redirect(['action' => 'add']);
+        }
+
+        $motAvecEspace = $vehicle->registration_number;
+        $motSansEspace = ltrim($motAvecEspace);
+
+        $registerImma = $this->Vehicles->find()
+            ->where(['registration_number' => $motSansEspace])
+            ->first();
+
+        if ($registerImma) {
+            $this->Flash->error(__('Ce véhicule est déjà enregistré.'));
+            return $this->redirect(['action' => 'add']);
+        }
+
+        $register = $vehicle->registration_number;
+        $register1 = str_replace(' ', '', $vehicle->registration_number);
+
+        $vehicleTest = $this->Vehicles->find()
+            ->where([
+                'OR' => [
+                    'registration_number' => $register,
+                    'registration_number' => $register1
+                ]
+            ])
+            ->first();
+
+        if (!empty($vehicleTest)) {
+            $this->Flash->error(__('Ce véhicule est déjà enregistré.'));
+            return $this->redirect(['action' => 'add']);
+        }
+
+        $customer_id = $this->request->getData('custome');
+        $customer_phone = $this->request->getData('phone');
+
+        // Date par défaut si aucune date n'est saisie
+        $lastVisitDateTrue = $this->request->getData('date');
+
+        if (empty($lastVisitDateTrue)) {
+            $lastVisitDateTrue = date('Y-m-d');
+        }
+
+        $lastVisitDate = new DateTime($lastVisitDateTrue);
+        $endAndSentDate = (clone $lastVisitDate)->modify('+90 days');
+
+        $customerId = $customer_id[0];
+        $convert = (int)$customer_id[0];
+
+        if ($convert == 0) {
+
+            $Customers = $this->fetchTable('Customers');
+
+            $customer = $Customers->newEmptyEntity();
+            $customer->name = $customer_id;
+            $customer->phone = $customer_phone;
+            $customer->create_uid = $this->currentUser->id;
+            $customer->write_uid = $this->currentUser->id;
+            $customer->startup_id = $startup_id;
+            $customer->uuid = Text::uuid();
+
+            if ($Customers->save($customer)) {
+                $customerId = $customer->id;
+            }
+
+            $contact = $this->fetchTable('Contacts')
+                ->find()
+                ->where(['phone' => $customer_phone])
+                ->first();
+
+            if (empty($contact)) {
+
+                $Contacts = $this->fetchTable('Contacts');
+
+                $contact = $Contacts->newEmptyEntity();
+                $contact->name = $customer_id;
+                $contact->phone = $customer_phone;
+                $contact->create_uid = $this->currentUser->id;
+                $contact->startup_id = $startup_id;
+                $contact->uuid = Text::uuid();
+
+                if ($Contacts->save($contact)) {
+                    $contactId = $contact->id;
+                }
+
+            } else {
+                $contactId = $contact->id;
+            }
+        }
+
+        $vehicle->lastvisitdate = $lastVisitDateTrue;
+        $vehicle->customer_id = $customerId;
+        $vehicle->create_uid = $this->currentUser->id;
+        $vehicle->write_uid = $this->currentUser->id;
+        $vehicle->startup_id = $startup_id;
+        $vehicle->uuid = Text::uuid();
+
+        $gender_id = $vehicle->gender_id;
+
+        if ($this->Vehicles->save($vehicle)) {
+
+            $TeamTable = $this->fetchTable('Teams');
+            $ContactTeamTable = $this->fetchTable('ContactsTeams');
+
+            $hisTeam = $TeamTable->find()
+                ->where(['gender_id' => $gender_id])
+                ->first();
+
+            if ($hisTeam && !empty($contactId)) {
+
+                $contactTeam = $ContactTeamTable->newEmptyEntity();
+                $contactTeam->contact_id = $contactId;
+                $contactTeam->team_id = $hisTeam->id;
+
+                $ContactTeamTable->save($contactTeam);
+            }
+
+            return $this->redirect(['action' => 'index']);
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+
+    $Reminders = $this->fetchTable('Reminders');
+
+    $genders = $this->fetchTable('Genders')
+        ->find('list', limit: 200)
+        ->all();
+
+    $loginstartupId = $startup_id;
+
+    $customers = $this->Vehicles->Customers->find()
+        ->where(['startup_id' => $loginstartupId])
+        ->select(['id', 'name', 'phone'])
+        ->limit(200)
+        ->all();
+
+    $customerOptions = [];
+
+    foreach ($customers as $customer) {
+        $customerOptions[$customer->id] = $customer->name . ' (' . $customer->phone . ')';
+    }
+
+    $this->set(compact('vehicle', 'customers', 'customerOptions', 'genders'));
+}
+    
 
 public function ad()
     {
@@ -269,7 +301,7 @@ public function ad()
             
             $customer_id = $this->request->getData('custome');
             $customer_phone = $this->request->getData('phone');
-             $lastVisitDateTrue = $this->request->getData('date');
+            $lastVisitDateTrue = $this->request->getData('date');
             $lastVisitDate = $this->request->getData('date');
             if ($lastVisitDate) {
                 $lastVisitDate = new DateTime($lastVisitDate);
