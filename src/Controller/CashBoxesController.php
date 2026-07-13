@@ -1478,57 +1478,6 @@ if (!empty($to)) {
         $mycashBox = $this->fetchTable('Cashboxes')->find()->where(['uuid'=>  $uuid])->first();
         
         
-        
-        // Valeur de caisse volatile temporaire
-        
-        // $CashMovements = $this->fetchTable('CashMovements');
-        
-        
-        // $query = $CashMovements->find();
-    
-        // $amountInput = $query
-        // ->where([
-        //     'type' => 'entrée',
-        //     'created >=' => $todayDate,
-        //     'user_id' => $userData->id
-        // ])
-        // ->select([
-        //     'tot' => $query->func()->sum('CashMovements.montant')
-        // ])
-        // ->enableHydration(false)
-        // ->first()['tot'] ?? 0;
-        
-        // $query = $CashMovements->find();
-        // $amountShare = $query
-        // ->where([
-        //     'type' => 'Transfert',
-        //     'created >=' => $todayDate,
-        //     'user_id' => $userData->id
-        // ])
-        // ->select([
-        //     'tot' => $query->func()->sum('CashMovements.montant')
-        // ])
-        // ->enableHydration(false)
-        // ->first()['tot'] ?? 0;
-        
-        // $query = $CashMovements->find();
-        // $amountInout = $query
-        // ->where([
-        //     'type' => 'Decaissement',
-        //     'created >=' => $todayDate,
-        //     'user_id' => $userData->id
-        // ])
-        // ->select([
-        //     'tot' => $query->func()->sum('CashMovements.montant')
-        // ])
-        // ->enableHydration(false)
-        // ->first()['tot'] ?? 0;
-        
-        // $amountInoutSum = $amountInout + $amountShare ?? 0;
-        
-        // $amountActuel = $amountInput - $amountInoutSum;
-        
-        
         if ($mycashBox->solde_actuel < $data['amount']) {
         // if ($amountActuel < $data['amount']) {
             $result = ['status'=>0, 'error'=>4,'message'=>'Le solde de votre caisse est inssufisant','code'=>'200'];
@@ -1545,6 +1494,7 @@ if (!empty($to)) {
         $cashMov->justificatif = $commit;
         $cashMov->create_uid =  $this->currentUser->id;
         $cashMov->montant =  $data['amount'];
+        $cashMov->startup_id =  12;
         $cashMov->uuid = Text::uuid();
         // debug($cashMov);die();
         if ($CashMovTable->save($cashMov)) {
