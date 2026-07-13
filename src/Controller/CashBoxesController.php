@@ -216,8 +216,7 @@ class CashBoxesController extends AppController
         throw new \Cake\Http\Exception\NotFoundException('Utilisateur introuvable');
     }
 
-    // $startupId = $userData->startup_id ?? null;
-    $startupId = 12;
+    $startupId = $userData->startup_id ?? null;
 
     // 🔹 Récupération des caisses
     if (in_array($userData->role, ['admin', 'directeur'])) {
