@@ -170,13 +170,21 @@ return [
      *   should be ignored in. Use this to ignore deprecations for plugins or parts of
      *   your application that still emit deprecations.
      */
+    // 'Error' => [
+    //     'errorLevel' => E_ALL,
+    //     'skipLog' => [],
+    //     'log' => true,
+    //     'trace' => true,
+    //     'ignoredDeprecationPaths' => [],
+    //      'errorLevel' => E_ALL & ~E_USER_DEPRECATED,
+    // ],
+
     'Error' => [
-        'errorLevel' => E_ALL,
+        'errorLevel' => E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED,
         'skipLog' => [],
         'log' => true,
-        'trace' => true,
+        'trace' => false,
         'ignoredDeprecationPaths' => [],
-         'errorLevel' => E_ALL & ~E_USER_DEPRECATED,
     ],
 
 
