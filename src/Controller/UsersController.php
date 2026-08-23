@@ -251,8 +251,11 @@ class UsersController extends AppController
         $accountTable = $this->fetchTable('Accounts');
         $adminTable = $this->fetchTable('Admins');
         
+        
         // Cherche l'utilisateur soit dans la table Accounts, soit dans la table Admins
         $user = $accountTable->findByUuid($uuid)->first() ?? $adminTable->findByUuid($uuid)->first();
+        debug($user);
+        die();
     
         if ($user) {
             // Met à jour les informations de base
