@@ -158,6 +158,8 @@
         let phone = $('#phone').val();
         let role = $('#role').val();
 
+        alert(name);
+
         // Construction du message de confirmation dynamique
         let title = "<?= __('Le numero {0} est il operationnel') ?>";
         title = title.replace('{0}', phone);
