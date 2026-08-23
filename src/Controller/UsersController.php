@@ -230,7 +230,7 @@ class UsersController extends AppController
             $account->username = $nameWithoutSpace;
             $account->passwordshow = $autoPassword;
             $account->password =  (string)$autoPassword;
-            debug($account);exit();
+            // debug($account);exit();
             if ($accountTable->save($account)) {
                     return $this->Json(['status'=>1, 'error'=>0,
                                 'message'=>'Collaborateur créer avec succès !',
