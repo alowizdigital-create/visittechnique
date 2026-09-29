@@ -32,7 +32,7 @@ class SendEmailCronCommand extends Command
 
     protected function sendSms(string $recipient, string $content, ConsoleIo $io): bool
     {
-        $apiToken = '1523|0XzFUAtbKmVp*zVquAGiWSv25480b08bf';
+        $apiToken = '1523|0XzFUAtbKmVpjJufqROEEEc9nqePzVquAGiWSv25480b08bf';
         $endpoint = 'https://app.techsoft-sms.com/api/http/sms/send';
 
         $data = [
