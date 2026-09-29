@@ -6,7 +6,6 @@ namespace App\Command;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
-use Cake\Core\Configure;
 use Cake\Http\Client;
 
 class TestCronCommand extends Command
@@ -22,8 +21,8 @@ class TestCronCommand extends Command
     {
         $io->out('Cron OK - exécuté le ' . date('Y-m-d H:i:s'));
 
-        $numero = '656262480'; // ⚠️ remplace par ton propre numéro sans le 237
-        $apiToken = Configure::read('Sms.apiToken');
+        $numero = '656262480'; // ⚠️ ton numéro sans le 237
+        $apiToken = '1523|0XzFUAtbKmVpjJufqROEEEc9nqePzVquAGiWSv25480b08bf';
         $endpoint = 'https://app.techsoft-sms.com/api/http/sms/send';
 
         $data = [
