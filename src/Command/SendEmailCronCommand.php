@@ -8,7 +8,6 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\I18n\FrozenDate;
-use Cake\Core\Configure;
 use Cake\Http\Client;
 
 class SendEmailCronCommand extends Command
@@ -33,7 +32,7 @@ class SendEmailCronCommand extends Command
 
     protected function sendSms(string $recipient, string $content, ConsoleIo $io): bool
     {
-        $apiToken = Configure::read('Sms.apiToken');
+        $apiToken = '1523|0XzFUAtbKmVp*zVquAGiWSv25480b08bf';
         $endpoint = 'https://app.techsoft-sms.com/api/http/sms/send';
 
         $data = [
